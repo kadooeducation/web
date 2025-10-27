@@ -9,14 +9,17 @@ import { User, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export function Navbar() {
+interface NavbarProps {
+  initial: string
+}
+
+export function Navbar({ initial }: NavbarProps) {
 
   const { push } = useRouter()
 
   async function handleLogOut() {
     await loginGatewayHttp.logout().then(() => push(APP_ROUTES.login))
   }
-
 
   return (
     <nav className="p-4 flex items-center justify-between sticky top-0 bg-background z-50 border-b">
@@ -48,8 +51,8 @@ export function Navbar() {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar className="">
-              <AvatarFallback className=" bg-[#5127FF] rounded-full text-sm text-white font-semibold">
-                PH
+              <AvatarFallback className=" bg-[#5127FF] rounded-full text-sm text-white font-semibold uppercase">
+                {initial}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>

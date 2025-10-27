@@ -14,4 +14,6 @@ export class HttpClientFactory {
 
     return new AxiosAdapter(jsCookieBrowserStorage);
   }
+
+  
 }

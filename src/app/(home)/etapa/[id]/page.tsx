@@ -5,12 +5,12 @@ import { Badge } from "@/presentation/external/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
 import { Separator } from "@/presentation/external/components/ui/separator"
 import { StepGatewayHttp } from "@/infra/modules/step/step-gateway-http"
-import { ActivityResponseGatewayHttp } from "@/infra/modules/activity-response/activity-response-gateway-http"
 import { ActivityResponseForm } from "@/presentation/modules/step-by-id/components/view/activity-response-form"
 import { BackToSteps } from "@/presentation/modules/step-by-id/components/view/back-to-steps"
 import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
 import { Metadata } from "next"
-
+import { kyClient } from "@/infra/external/http/ky-client/api"
+import type { Step } from "@/infra/modules/step/step-gateway"
 
 export async function generateMetadata(
   { params }: { params: { id: string } }
@@ -32,20 +32,13 @@ export async function generateMetadata(
   }
 }
 
-
 export default async function StepPage({ params }: { params: { id: string } }) {
 
   const { id } = await params
 
-  const client = HttpClientFactory.create()
+  const userAlreadyResponseActivity = await kyClient.get<boolean>(`activity-response/${id}`)
 
-  const activityResponse = new ActivityResponseGatewayHttp(client)
-
-  const userAlreadyResponseActivity = await activityResponse.userAlreadyResponseByStepId(Number(id))
-
-  const stepGateway = new StepGatewayHttp(client)
-
-  const step = await stepGateway.getById(Number(id))
+  const step = await kyClient.get<Step>(`steps/${id}`)
 
   if (!step) return notFound()
 
@@ -159,8 +152,6 @@ export default async function StepPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       )}
-
-
 
       {userAlreadyResponseActivity && (
         <Card>

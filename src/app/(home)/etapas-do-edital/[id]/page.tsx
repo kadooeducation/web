@@ -1,8 +1,9 @@
 
 
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
-import { StepGatewayHttp, stepGatewayHttp } from "@/infra/modules/step/step-gateway-http"
-import { StepsSection } from "@/presentation/modules/steps/view/components/steps-section"
+import type { Step } from "@/infra/modules/step/step-gateway";
+
+import { kyClient } from "@/infra/external/http/ky-client/api";
+import { StepsSection } from "@/presentation/modules/steps/view/components/steps-section";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,10 +14,8 @@ export const metadata: Metadata = {
 export default async function StepsEdictPage({ params }: { params: { id: string } }) {
   const { id } = await params
 
-  const client = HttpClientFactory.create()
-  const stepGateway = new StepGatewayHttp(client)
 
-  const steps = await stepGateway.getByEdictId(Number(id))
+  const steps = await kyClient.get<Step[]>(`steps/edict/${id}`)
 
   return (
     <div className="min-h-screen bg-white py-12">

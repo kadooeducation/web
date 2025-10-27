@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/presentation/external/components/ui/sidebar";
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/presentation/shared/layout/components/app-sidebar/app-sidebar";
 import { Navbar } from "@/presentation/shared/layout/components/navbar/navbar";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 
 export const metadata: Metadata = {
   title: "Início",
@@ -15,11 +16,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
+  const user = await kyClient.get<{ name: string }>("me")
+
+  const initial = user.name[0]
+
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <main className="w-full">
-        <Navbar />
+        <Navbar initial={initial} />
         <div className="px-4">{children}</div>
       </main>
       <Toaster richColors position="top-right" />

@@ -6,12 +6,13 @@ import { UserGatewayHttp } from "@/infra/modules/user/user-gateway-http";
 import { Card, CardContent } from "@/presentation/external/components/ui/card";
 
 import Link from "next/link";
-import { WelcomeBanner } from "../welcome-banner";
-import { EnrollmentOverview } from "../enrollment-overview";
+import { WelcomeBanner } from "./welcome-banner";
+import { EnrollmentOverview } from "./enrollment-overview";
 import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory";
 import { Suspense } from "react";
 import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
-import { HighlightMentors } from "../highlight-mentors";
+import { HighlightMentors } from "./highlight-mentors";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 
 export const edicts = [
   {
@@ -66,15 +67,10 @@ export const edicts = [
 
 
 export async function HomeSection() {
-  const client = HttpClientFactory.create()
-  const userGatewayHttp = new UserGatewayHttp(client)
 
-  const user = await userGatewayHttp.get()
-
+  const user = await kyClient.get<{ name: string, role: string }>("me")
 
   const firstName = user?.name.split(" ")[0]
-  const role = user?.role
-
 
   return (
     <div className="min-h-screen">

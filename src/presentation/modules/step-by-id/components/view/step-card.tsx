@@ -2,7 +2,6 @@
 
 import { deleteActivityStepAction } from "@/app/adm/editais/[id]/(actions)/delete-activity-step-action"
 import { deleteEventAction } from "@/app/adm/editais/[id]/(actions)/delete-event-action"
-import { Step } from "@/infra/modules/step/step-gateway"
 import { Button } from "@/presentation/external/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/presentation/external/components/ui/dialog"

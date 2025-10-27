@@ -1,13 +1,25 @@
-import { EdictItems } from "./edicts-items/edicts-items";
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory";
-import { EdictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http";
+import { EdictItems } from "./edicts-items";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 
 export async function EnrollmentOverview() {
 
-  const client = HttpClientFactory.create();
-  const edictGatewayHttp = new EdictGatewayHttp(client);
 
-  const edicts = await edictGatewayHttp.edictsAttachUser();
+
+  const edicts = await kyClient.get<{
+    id: number
+    status: string
+    title: string
+    description: string
+    organizer: string
+    file: string
+    contact: string
+    location: string
+    startDate: Date
+    endDate: Date
+    categories: string[]
+  }[]>("user-edict")
+
+  // const edicts = await edictGatewayHttp.edictsAttachUser();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

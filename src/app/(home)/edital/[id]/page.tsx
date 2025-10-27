@@ -4,14 +4,25 @@ import { EdictDetailsSection } from "@/presentation/modules/edict/view/component
 import { notFound } from "next/navigation"
 import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
 import { Metadata } from "next"
+import { kyClient } from "@/infra/external/http/ky-client/api"
 
 export async function generateMetadata(
   { params }: { params: { id: string } }
 ): Promise<Metadata> {
-  const client = HttpClientFactory.create()
-  const gateway = new EdictGatewayHttp(client)
 
-  const edict = await gateway.getById(Number(params.id))
+  const edict = await kyClient.get<{
+    id: number
+    status: string
+    title: string
+    description: string
+    organizer: string
+    file: string
+    contact: string
+    location: string
+    startDate: Date
+    endDate: Date
+    categories: string[]
+  }>(`edict/${params.id}`)
 
   if (!edict) {
     return {
@@ -32,10 +43,19 @@ export default async function EdictDetailsPage({
 }) {
   const { id } = await params
 
-  const client = HttpClientFactory.create()
-  const gateway = new EdictGatewayHttp(client)
-
-  const edict = await gateway.getById(Number(id))
+  const edict = await kyClient.get<{
+    id: number
+    status: string
+    title: string
+    description: string
+    organizer: string
+    file: string
+    contact: string
+    location: string
+    startDate: Date
+    endDate: Date
+    categories: string[]
+  }>(`edict/${id}`)
 
 
   if (!edict) return notFound()

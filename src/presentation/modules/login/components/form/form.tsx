@@ -1,62 +1,40 @@
 'use client'
 
-import { loginGatewayHttp } from "@/infra/modules/login/login-gateway-http";
 import { Input } from "@/presentation/shared/components";
-import { useForm } from "react-hook-form";
-import { LoginValidation } from "@/validation/protocols/login/login";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginValidation } from "@/validation/validators/login/login-validation";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { APP_ROUTES } from "@/shared/constants/routes";
-import { toast } from "sonner";
 import Link from "next/link";
+import { useFormState } from "@/shared/hooks/use-form-state";
+import { signInWithEmail } from "../action";
+import { Alert, AlertDescription, AlertTitle } from "@/presentation/external/components/ui/alert";
 
 export function Form() {
-  const { push } = useRouter()
-  const [isLoading, setIsLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<LoginValidation>({
-    resolver: zodResolver(loginValidation)
-  });
-
-  async function handleSubmitLogin(data: LoginValidation) {
-    setIsLoading(true);
-
-    try {
-      await loginGatewayHttp.login(data);
-      toast.success("Login realizado com sucesso!");
-      push(APP_ROUTES.home);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error)
-        toast.error(error?.message)
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const [{ success, message, errors }, handleSubmitLogin, isPending] = useFormState({
+    action: signInWithEmail
+  })
 
   return (
-    <form className="flex flex-col gap-6 w-full mt-5" onSubmit={handleSubmit(handleSubmitLogin)}>
+    <form className="flex flex-col gap-6 w-full mt-5" onSubmit={handleSubmitLogin}>
+      {success === false && message && (
+        <Alert variant='destructive'>
+          <AlertTriangle className="size-4" />
+          <AlertTitle>Sign in failed!</AlertTitle>
+          <AlertDescription>
+            {message}
+          </AlertDescription>
+        </Alert>
+      )}
       <Input.Root>
         <Input.Label htmlFor="email">Email</Input.Label>
         <Input.Core
           id="email"
           type="email"
+          name="email"
           placeholder="seu@email.com"
           className="w-full"
-          {...register("email")}
         />
-        {errors.email && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.email.message}
-          </p>
+        {errors?.properties?.email && (
+          <p className="text-xs font-medium text-red-500 dar:text-red-400">{errors?.properties?.email.errors[0]}</p>
         )}
       </Input.Root>
 
@@ -65,13 +43,12 @@ export function Form() {
         <Input.Core
           id="password"
           type="password"
+          name="password"
           placeholder="••••••••••••••••"
-          {...register("password")}
+
         />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.password.message}
-          </p>
+        {errors?.properties?.password && (
+          <p className="text-xs font-medium text-red-500 dar:text-red-400">{errors?.properties?.password.errors[0]}</p>
         )}
       </Input.Root>
 
@@ -79,11 +56,10 @@ export function Form() {
 
       <button
         type="submit"
-        disabled={isLoading}
         className="bg-black hover:opacity-90 transition-all text-white font-medium rounded-lg px-6 py-3 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
-        {isLoading ? '' : 'Entrar'}
+        {isPending && <Loader2 className="w-5 h-5 animate-spin" />}
+        {isPending ? '' : 'Entrar'}
       </button>
     </form>
   );

@@ -14,7 +14,6 @@ export class AxiosAdapter implements HttpClient {
     });
 
     this.api.interceptors.request.use((config) => {
-      // const token = this.getToken();
 
       console.log(config)
       const token = this.browser.get(process.env.NEXT_PUBLIC_TOKEN_NAME)

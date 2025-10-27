@@ -219,9 +219,9 @@ export default function MentorsPage() {
 
   return (
     <SidebarProvider>
-      <HomeSideBar />
+      {/* <HomeSideBar /> */}
       <SidebarInset>
-        <Header />
+        {/* <Header /> */}
         <div className="bg-gray-50 min-h-screen">
           <main className="p-6 space-y-8 max-w-7xl mx-auto">
             {/* Header Section */}

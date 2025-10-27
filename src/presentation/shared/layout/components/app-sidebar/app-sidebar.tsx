@@ -15,9 +15,8 @@ import {
 } from "@/presentation/external/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory";
-import { UserGatewayHttp } from "@/infra/modules/user/user-gateway-http";
 import { EnumProfile } from "../profile/profile";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 
 const items = [
   {
@@ -42,15 +41,12 @@ const roles = {
   [EnumProfile.ROLE_ENTERPRISE]: "ROLE_ENTERPRISE",
   [EnumProfile.ROLE_MENTOR]: "ROLE_MENTOR",
   [EnumProfile.ROLE_STUDENT]: "ROLE_STUDENT",
-
-}
+} as const
 
 export async function AppSidebar() {
 
-  const client = HttpClientFactory.create()
-  const gateway = new UserGatewayHttp(client)
+  const user = await kyClient.get<{ name: string, role: keyof typeof roles }>("me")
 
-  const user = await gateway.get()
 
   return (
     <Sidebar collapsible="icon">

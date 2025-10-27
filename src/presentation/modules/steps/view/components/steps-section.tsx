@@ -5,13 +5,13 @@ import { Badge } from "@/presentation/external/components/ui/badge"
 import { ArrowRight, ChevronDown } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
-import { Step } from "@/infra/modules/step/step-gateway"
+import type { Step } from "@/infra/modules/step/step-gateway"
 
 interface StepsSectionProps {
   steps: Step[]
 }
 
-export function StepsSection({ steps }: StepsSectionProps) {
+export function   StepsSection({ steps }: StepsSectionProps) {
   const [openId, setOpenId] = useState<string | number | null>(null)
 
   return (
