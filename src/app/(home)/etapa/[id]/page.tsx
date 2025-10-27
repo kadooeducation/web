@@ -13,12 +13,14 @@ import { kyClient } from "@/infra/external/http/ky-client/api"
 import type { Step } from "@/infra/modules/step/step-gateway"
 
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const client = HttpClientFactory.create()
   const gateway = new StepGatewayHttp(client)
 
-  const step = await gateway.getById(Number(params.id))
+  const { id } = await params
+
+  const step = await gateway.getById(Number(id))
 
   if (!step) {
     return {
@@ -32,7 +34,7 @@ export async function generateMetadata(
   }
 }
 
-export default async function StepPage({ params }: { params: { id: string } }) {
+export default async function StepPage({ params }: { params: Promise<{ id: string }> }) {
 
   const { id } = await params
 

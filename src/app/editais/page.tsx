@@ -1,13 +1,10 @@
 'use client'
 
 import { Button } from "@/presentation/external/components/ui/button";
-import { SidebarInset, SidebarProvider } from "@/presentation/external/components/ui/sidebar";
-import { HomeSideBar } from "@/presentation/shared/layout/components/sidebar";
 import { Calendar, Search, Filter, ChevronDown, MapPin, Clock, Users, TrendingUp, Star } from "lucide-react";
-import { Header } from "@/presentation/shared/layout/components/header/header";
 import { useCallback, useEffect, useState } from "react";
 import { userGatewayHttp } from "@/infra/modules/user/user-gateway-http";
-import { EnumProfile, Profile } from "@/presentation/shared/layout/components/profile/profile";
+import { EnumProfile } from "@/presentation/shared/layout/components/profile/profile";
 import { Loading } from "@/presentation/shared/layout/components/loading/loading";
 import { Card, CardContent } from "@/presentation/external/components/ui/card";
 import { Input } from "@/presentation/external/components/ui/input";
@@ -190,7 +187,7 @@ export default function EditaisPage() {
       "E-commerce": "bg-orange-100 text-orange-700",
       "EduTech": "bg-indigo-100 text-indigo-700"
     };
-    return colors[category] || "bg-gray-100 text-gray-700";
+    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-700";
   };
 
   const getDifficultyColor = (difficulty: string) => {

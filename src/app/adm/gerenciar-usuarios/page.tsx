@@ -1,18 +1,17 @@
 'use client'
 
 import { APP_ROUTES } from "@/shared/constants/routes";
-import { Home, FileText, UsersIcon, BarChart3, LogOut, UserRoundCog, Calendar, Settings, ArrowRight, Link2, UserPlus } from "lucide-react";
+import { Home, FileText, UsersIcon, BarChart3, LogOut, UserRoundCog, Settings, ArrowRight, Link2, UserPlus } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/presentation/external/components/ui/sidebar";
-import Image from 'next/image'
-import { userGatewayHttp } from "@/infra/modules/user/user-gateway-http";
-import { useCallback, useState } from "react";
+import Image from 'next/image';
+import { useState } from "react";
 import { EnumProfile } from "@/presentation/shared/layout/components/profile/profile";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/presentation/external/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 
 import { useRouter } from "next/navigation";
 import { loginGatewayHttp } from "@/infra/modules/login/login-gateway-http";
-import Link from 'next/link'
+import Link from 'next/link';
 
 const menuItems = [
   { title: "Home", icon: Home, url: APP_ROUTES.home },
@@ -26,14 +25,11 @@ const menuItems = [
 export default function ManagerUsersPage() {
   const { push } = useRouter()
 
-  const [user, setUser] = useState<{ name: string, role: EnumProfile } | null>(null)
+  const [user] = useState<{ name: string, role: EnumProfile } | null>(null)
 
-  const getUser = useCallback(async () => {
-    await userGatewayHttp.get().then(setUser)
-  }, [])
 
-  const firstName = user?.name.split(" ")[0]
-  const role = user?.role
+
+  const role = user?.role as keyof typeof ROLE_USER
   const firstLetter = user?.name?.charAt(0).toUpperCase();
 
   const ROLE_USER = {
@@ -41,7 +37,7 @@ export default function ManagerUsersPage() {
     [EnumProfile.ROLE_MENTOR]: "Mentor",
     [EnumProfile.ROLE_ENTERPRISE]: "Empresa",
     [EnumProfile.ROLE_ADMIN]: "Administrador"
-  }
+  } as const
 
   async function handleLogOut() {
     await loginGatewayHttp.logout().then(() => push(APP_ROUTES.login))

@@ -80,9 +80,9 @@ export default function MeusEditaisPage() {
 
   return (
     <SidebarProvider>
-      <HomeSideBar role={role} />
+      {/* <HomeSideBar role={role} /> */}
       <SidebarInset>
-        <Header profile={<Profile {...user} />} />
+        {/* <Header profile={<Profile {...user} />} /> */}
         <div className="bg-gray-50 min-h-screen">
           <main className="p-6 space-y-8 w-full min-h-screen">
             <h1 className="text-2xl font-bold text-gray-900">Meus Editais</h1>

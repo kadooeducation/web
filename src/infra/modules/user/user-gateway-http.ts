@@ -1,7 +1,7 @@
 import { client, HttpClient } from "@/infra/external/http";
 import { GetUserDTO } from "./dto/get-user-dto";
 import { CreateUser, UserGateway } from "./user-gateway";
-import { User } from "@/app/adm/usuario-edital/page";
+import type { EnumProfile } from "@/presentation/shared/layout/components/profile/profile";
 
 export class UserGatewayHttp implements UserGateway {
 
@@ -17,8 +17,8 @@ export class UserGatewayHttp implements UserGateway {
     return result.value;
   }
 
-  async getAll(): Promise<User[]> {
-    const result = await this.client.get<User[]>("/user")
+  async getAll(): Promise<{ id: string, name: string, role: EnumProfile }[]> {
+    const result = await this.client.get<{id: string, name: string, role: EnumProfile }[]>("/user")
 
     if (result.isLeft()) {
       throw new Error("Não foi possível encontrar os usuários.")

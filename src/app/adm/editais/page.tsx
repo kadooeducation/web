@@ -1,6 +1,8 @@
 import { kyClient } from "@/infra/external/http/ky-client/api"
 import { AdmEdictsTable } from "@/presentation/modules/adm/adm-edicts-table"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminEdictsPage() {
 
   const edicts = await kyClient.get<{

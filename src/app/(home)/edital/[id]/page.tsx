@@ -1,14 +1,13 @@
-
-import { EdictGatewayHttp, edictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http"
 import { EdictDetailsSection } from "@/presentation/modules/edict/view/components/edict-details/edict-details"
 import { notFound } from "next/navigation"
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
 import { Metadata } from "next"
 import { kyClient } from "@/infra/external/http/ky-client/api"
 
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
+
+  const { id } = await params
 
   const edict = await kyClient.get<{
     id: number
@@ -22,7 +21,7 @@ export async function generateMetadata(
     startDate: Date
     endDate: Date
     categories: string[]
-  }>(`edict/${params.id}`)
+  }>(`edict/${id}`)
 
   if (!edict) {
     return {

@@ -233,13 +233,13 @@ export function EventStepCard({ step }: any) {
               <div className="grid gap-2">
                 <Label htmlFor="meetingLink">Link da reunião</Label>
                 <Input id="meetingLink" placeholder="https://..." {...register("meetingLink")} />
-                {errors.meetingLink && <p className="text-xs text-red-600">{String(errors.meetingLink.message)}</p>}
+                {/* {errors.meetingLink && <p className="text-xs text-red-600">{String(errors.meetingLink.message)}</p>} */}
               </div>
             ) : (
               <div className="grid gap-2">
                 <Label htmlFor="address">Endereço</Label>
                 <Input id="address" placeholder="Rua, número - bairro, cidade/UF" {...register("address")} />
-                {errors.address && <p className="text-xs text-red-600">{String(errors.address.message)}</p>}
+                {/* {errors.address && <p className="text-xs text-red-600">{String(errors.address.message)}</p>} */}
               </div>
             )}
 

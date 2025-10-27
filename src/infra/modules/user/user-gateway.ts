@@ -1,4 +1,4 @@
-import { User } from "@/app/adm/usuario-edital/page";
+import type { EnumProfile } from "@/presentation/shared/layout/components/profile/profile";
 import { GetUserDTO } from "./dto/get-user-dto";
 
 export interface CreateUser {
@@ -10,6 +10,6 @@ export interface CreateUser {
 
 export interface UserGateway {
   get(): Promise<GetUserDTO>
-  getAll(): Promise<User[]>
+  getAll(): Promise<{id: string, name: string, role: EnumProfile }[]>
   create(props: CreateUser): Promise<void>
 }

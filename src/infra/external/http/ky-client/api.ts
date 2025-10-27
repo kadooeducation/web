@@ -1,6 +1,6 @@
 import ky, { type KyInstance } from 'ky'
 import type { CookiesFn } from 'cookies-next/server'
-import cookiesNext from 'cookies-next'
+import { getCookie } from 'cookies-next'
 
 export class KyAdapter {
   private readonly api: KyInstance
@@ -21,7 +21,7 @@ export class KyAdapter {
               cookieStore = serverCookies
             }
 
-            const token = await cookiesNext.getCookie("kadoo.token", { cookies: cookieStore })
+            const token = await getCookie("kadoo.token", { cookies: cookieStore })
 
             if (token) {
               request.headers.set("Authorization", `Bearer ${token}`)

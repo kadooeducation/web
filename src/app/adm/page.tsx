@@ -9,6 +9,8 @@ import { ApplicantsBarChart } from "@/presentation/modules/home/components/appli
 import { MentorAreasPieChart } from "@/presentation/modules/home/components/mentors-areas-pie-chart";
 import { PendingMentorsList } from "@/presentation/modules/home/components/pending-mentors-list";
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminPage() {
   const user = await kyClient.get<{ name: string }>("me")
 

@@ -1,39 +1,39 @@
-
 import { Button } from "@/presentation/external/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
 import { Separator } from "@/presentation/external/components/ui/separator"
 
-import { Footprints, PlusCircle, Calendar as CalIcon, Clock3, Link2, MapPin } from "lucide-react"
-import { EdictGatewayHttp, edictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http"
+import { Footprints, PlusCircle } from "lucide-react"
 import { notFound } from "next/navigation"
 import { CreateInPersonEventDialog } from "@/presentation/modules/step-by-id/components/create/create-in-person-event-dialog"
 import { CreateOnlineEventDialog } from "@/presentation/modules/step-by-id/components/create/create-online-event-dialog"
 import { CreateActivityDialog } from "@/presentation/modules/step-by-id/components/create/create-activity-dialog"
-import { StepGatewayHttp, stepGatewayHttp } from "@/infra/modules/step/step-gateway-http"
 import { createInPersonStepAction } from "./(actions)/create-in-person-step-action"
-import { StepCard } from "@/presentation/modules/step-by-id/components/view/step-card"
 import { EventStepCard } from "@/presentation/modules/step-by-id/components/view/event-step-card"
 import { Fragment } from "react"
 import { ActivityStepCard } from "@/presentation/modules/step-by-id/components/view/activity-step-card"
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
+import { kyClient } from "@/infra/external/http/ky-client/api"
+import type { Step } from "@/infra/modules/step/step-gateway"
 
-type PageProps = {
-  params: Promise<{ id: number }>
-}
+export const dynamic = 'force-dynamic'
 
-export default async function EdictByIdPage({ params }: PageProps) {
-
-  const client = HttpClientFactory.create()
-  const edictGateway = new EdictGatewayHttp(client)
-
-  const stepGateway = new StepGatewayHttp(client)
-
+export default async function EdictByIdPage({ params }: { params: Promise<{ id: number }> }) {
 
   const { id } = await params
+  const edict = await kyClient.get<{
+    id: number
+    status: string
+    title: string
+    description: string
+    organizer: string
+    file: string
+    contact: string
+    location: string
+    startDate: Date
+    endDate: Date
+    categories: string[]
+  }>(`edict/${id}`)
 
-  const edict = await edictGateway.getById(id)
-
-  const steps = await stepGateway.getByEdictId(id)
+  const steps = await kyClient.get<Step[]>(`steps/edict/${id}`)
 
   if (!edict) notFound()
 

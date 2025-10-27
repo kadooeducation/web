@@ -352,8 +352,8 @@ export default function MentorsPage() {
                   
                   {/* Status Badge */}
                   <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${statusColors[mentor.status]}`}></div>
-                    <span className="text-xs font-medium text-gray-600">{statusLabels[mentor.status]}</span>
+                    <div className={`w-3 h-3 rounded-full ${statusColors[mentor.status as keyof typeof statusColors]}`}></div>
+                    <span className="text-xs font-medium text-gray-600">{statusLabels[mentor.status as keyof typeof statusLabels]}</span>
                   </div>
                   
                   <CardContent className="p-6 relative z-10">

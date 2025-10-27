@@ -32,6 +32,7 @@ import { edictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http";
 import { userGatewayHttp } from "@/infra/modules/user/user-gateway-http";
 import { userEdictGatewayHttp } from "@/infra/modules/user-edict/user-edict-gateway-http";
 import { toast } from "sonner";
+import type { EnumProfile } from "@/presentation/shared/layout/components/profile/profile";
 
 const menuItems = [
   { title: "Home", icon: Home, url: APP_ROUTES.home },
@@ -55,7 +56,7 @@ type FormValues = z.infer<typeof schema>;
 export default function UsersEdictsPage() {
   const { push } = useRouter();
 
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<{id: string, name: string, role: EnumProfile}[]>([]);
   const [edicts, setEdicts] = useState<Edict[]>([]);
 
   const {

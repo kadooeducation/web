@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Etapas do Edital",
 };
 
-export default async function StepsEdictPage({ params }: { params: { id: string } }) {
+export default async function StepsEdictPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
 
