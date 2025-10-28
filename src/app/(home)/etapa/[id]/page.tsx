@@ -15,12 +15,21 @@ import type { Step } from "@/infra/modules/step/step-gateway"
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
-  const client = HttpClientFactory.create()
-  const gateway = new StepGatewayHttp(client)
-
   const { id } = await params
 
-  const step = await gateway.getById(Number(id))
+  const step = await kyClient.get<{
+    id: number
+  title: string
+  description: string
+  date: Date
+  status: string
+  event: Event
+  kind: string
+  activity?: {
+    dueDate: Date
+    file: string
+  }
+  }>(`steps/${id}`)
 
   if (!step) {
     return {

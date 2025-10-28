@@ -19,13 +19,6 @@ export default async function StepsEdictPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="min-h-screen bg-white py-12">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-[#5127FF] mb-2">Etapas do edital</h1>
-        <p className="text-muted-foreground">
-          Acompanhe as etapas disponíveis neste edital.
-        </p>
-      </div>
-
       <StepsSection steps={steps} />
     </div>
   )
