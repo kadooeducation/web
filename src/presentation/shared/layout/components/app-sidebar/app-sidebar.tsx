@@ -82,7 +82,6 @@ export async function AppSidebar() {
                   {item.title === "Notificações" && (
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   )}
-
                   {item.title === "Certificados Emitidos" && (
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   )}

@@ -25,7 +25,7 @@ export default async function RootLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <main className="w-full">
-        <Navbar initial={user.acronym} />
+        {/* <Navbar initial={user.acronym} /> */}
         <div className="px-4">{children}</div>
       </main>
       <Toaster richColors position="top-right" />
