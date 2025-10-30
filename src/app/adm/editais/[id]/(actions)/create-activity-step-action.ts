@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { stepGatewayHttp } from '@/infra/modules/step/step-gateway-http'
+import { kyClient } from '@/infra/external/http/ky-client/api'
 
 export async function createActivityStepAction(edictId: number, input: {
   title: string
@@ -10,7 +10,8 @@ export async function createActivityStepAction(edictId: number, input: {
   file: string
   description: string
 }) {
-  await stepGatewayHttp.createActivity({
+
+  await kyClient.post("activity-step", {
     title: input.title,
     date: input.date,
     dueDate: new Date(input.dueDate),

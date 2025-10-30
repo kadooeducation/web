@@ -19,6 +19,7 @@ export const dynamic = 'force-dynamic'
 export default async function EdictByIdPage({ params }: { params: Promise<{ id: number }> }) {
 
   const { id } = await params
+
   const edict = await kyClient.get<{
     id: number
     status: string
@@ -36,6 +37,8 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
   const steps = await kyClient.get<Step[]>(`steps/edict/${id}`)
 
   if (!edict) notFound()
+
+    console.log(steps)
 
   return (
     <div className="min-h-screen">

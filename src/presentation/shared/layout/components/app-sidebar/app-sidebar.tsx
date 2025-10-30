@@ -1,17 +1,15 @@
-import {
-  Home,
-  Inbox,
-  Calendar, Settings, Projector
-} from "lucide-react";
+import { Home, Inbox, Calendar, Settings, Projector } from "lucide-react";
 import {
   Sidebar,
-  SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
 } from "@/presentation/external/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
@@ -37,16 +35,16 @@ const items = [
 ];
 
 const roles = {
-  [EnumProfile.ROLE_ADMIN]: "ROLE_ADMIN",
-  [EnumProfile.ROLE_ENTERPRISE]: "ROLE_ENTERPRISE",
-  [EnumProfile.ROLE_MENTOR]: "ROLE_MENTOR",
-  [EnumProfile.ROLE_STUDENT]: "ROLE_STUDENT",
-} as const
+  [EnumProfile.ROLE_ADMIN]: "ADMIN",
+  [EnumProfile.ROLE_ENTERPRISE]: "ENTERPRISE",
+  [EnumProfile.ROLE_MENTOR]: "MENTOR",
+  [EnumProfile.ROLE_STUDENT]: "STUDENT",
+} as const;
 
 export async function AppSidebar() {
-
-  const user = await kyClient.get<{ name: string, role: keyof typeof roles }>("me")
-
+  const user = await kyClient.get<{ name: string; role: keyof typeof roles }>(
+    "me"
+  );
 
   return (
     <Sidebar collapsible="icon">
@@ -55,13 +53,17 @@ export async function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <div className="relative w-[175px] h-[71px]">
-                <Image src="/logo/logo.svg" alt="logo" fill className="object-contain" />
+                <Image
+                  src="/logo/logo.svg"
+                  alt="logo"
+                  fill
+                  className="object-contain"
+                />
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      {/* <SidebarSeparator /> */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navegação Geral</SidebarGroupLabel>
@@ -84,7 +86,7 @@ export async function AppSidebar() {
                   )}
                 </SidebarMenuItem>
               ))}
-              {roles[user.role] === "ROLE_ADMIN" && (
+              {roles[user.role] === "ADMIN" && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link href="/adm">
@@ -199,5 +201,5 @@ export async function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter> */}
     </Sidebar>
-  )
+  );
 }

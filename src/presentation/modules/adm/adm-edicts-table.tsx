@@ -32,7 +32,7 @@ interface AdmEdictsTableProps {
 }
 
 
-export async function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
+export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
 
   function handleDelete(id: number) {
     // if (confirm("Deseja excluir este edital?")) {

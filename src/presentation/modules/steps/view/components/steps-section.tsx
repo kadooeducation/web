@@ -320,15 +320,6 @@ export function StepsSection({ steps }: StepsSectionProps) {
           )
         })}
       </div>
-
-      <div className="mt-6 flex items-center justify-center">
-        <Badge
-          className="rounded-full px-3 py-1 text-xs font-medium shadow-sm"
-          style={{ background: 'rgba(88,204,2,0.12)', color: DUO_GREEN_DARK }}
-        >
-          interface inspirada no duolingo
-        </Badge>
-      </div>
     </div>
   )
 }

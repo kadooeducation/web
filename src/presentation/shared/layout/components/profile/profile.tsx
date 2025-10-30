@@ -6,10 +6,10 @@ interface ProfileProps {
 }
 
 export enum EnumProfile {
-  ROLE_STUDENT = "ROLE_STUDENT",
-  ROLE_MENTOR = "ROLE_MENTOR",
-  ROLE_ENTERPRISE = "ROLE_ENTERPRISE",
-  ROLE_ADMIN = "ROLE_ADMIN"
+  ROLE_STUDENT = "STUDENT",
+  ROLE_MENTOR = "MENTOR",
+  ROLE_ENTERPRISE = "ENTERPRISE",
+  ROLE_ADMIN = "ADMIN"
 }
 
 export function Profile({ name, role }: ProfileProps) {

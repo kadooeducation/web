@@ -63,8 +63,6 @@ export function EventStepCard({ step }: any) {
   const pill = stepPill(step)
   const PillIcon = pill.icon
 
-  console.log(step)
-
   const isOnline = step.event?.type === "online"
   const schema = isOnline ? onlineSchema : inPersonSchema
 

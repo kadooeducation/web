@@ -68,10 +68,6 @@ export const edicts = [
 
 export async function HomeSection() {
 
-  const user = await kyClient.get<{ name: string, role: string }>("me")
-
-  const firstName = user?.name.split(" ")[0]
-
   return (
     <div className="min-h-screen">
       {/* <HomeSideBar role={role} /> */}
@@ -80,9 +76,9 @@ export async function HomeSection() {
       <section className="p-6 space-y-8">
 
 
-        <WelcomeBanner name={String(firstName)} />
+        <WelcomeBanner />
 
-        <div className="grid gap-6  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
+        {/* <div className="grid gap-6  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
           <Card className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
             <div className="absolute inset-0 bg-gradient-to-br from-[#5127FF]/5 to-[#5127FF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <CardContent className="p-6 relative">
@@ -153,7 +149,7 @@ export async function HomeSection() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         <div className="space-y-6">
           <div className="flex items-center justify-between">

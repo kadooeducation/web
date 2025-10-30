@@ -4,11 +4,11 @@ import { kyClient } from "@/infra/external/http/ky-client/api"
 import { HTTPError } from "ky"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
-import z from "zod"
+import { z } from "zod"
 
 const signInSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1)
+  email: z.email({ error: "Informe um e-mail válido." }),
+  password: z.string().min(1, { error: "Senha inválida."})
 })
 
 export async function signInWithEmail(data: FormData) {
@@ -24,6 +24,7 @@ export async function signInWithEmail(data: FormData) {
     }
   }
 
+
   const { email, password } = result.data
 
   try {
@@ -32,6 +33,8 @@ export async function signInWithEmail(data: FormData) {
         path: "/",
         maxAge: 60 * 60 * 24 * 7 // 7 days
       })
+
+      console.log(token)
 
   } catch (error) {
     if (error instanceof HTTPError) {

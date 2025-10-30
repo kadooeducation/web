@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -22,7 +23,7 @@ import { Calendar as CalendarShad } from "@/presentation/external/components/ui/
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/presentation/external/lib/utils"
 import { Textarea } from "@/presentation/external/components/ui/textarea"
-import { PropsWithChildren, startTransition } from "react"
+import { PropsWithChildren, startTransition, useTransition } from "react"
 import { createOnlineStepAction } from "@/app/adm/editais/[id]/(actions)/create-online-step-action"
 import { toast } from "sonner"
 
@@ -57,6 +58,8 @@ export function CreateOnlineEventDialog({ edictId, children }: CreateOnlineEvent
       description: ""
     }
   })
+
+  const [isPending, startTransition] = useTransition()
 
   async function onSubmit(data: FormData) {
     startTransition(async () => {
@@ -157,9 +160,11 @@ export function CreateOnlineEventDialog({ edictId, children }: CreateOnlineEvent
 
           <DialogFooter className="mt-1">
             <Button className="bg-[#5127FF] hover:bg-[#5127FF]/90" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Adicionando..." : "Adicionar Evento"}
+              {isPending ? "Adicionando..." : "Adicionar Evento"}
             </Button>
-            <Button variant="ghost" type="button">Cancelar</Button>
+            <DialogClose asChild>
+              <Button variant="ghost" type="button">Cancelar</Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>

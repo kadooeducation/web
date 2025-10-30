@@ -18,7 +18,7 @@ export function Form() {
       {success === false && message && (
         <Alert variant='destructive'>
           <AlertTriangle className="size-4" />
-          <AlertTitle>Sign in failed!</AlertTitle>
+          <AlertTitle>Falha no login!</AlertTitle>
           <AlertDescription>
             {message}
           </AlertDescription>

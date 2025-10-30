@@ -47,7 +47,7 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
 
   const { id } = await params
 
-  const userAlreadyResponseActivity = await kyClient.get<boolean>(`activity-response/${id}`)
+  const userAlreadyResponseActivity = await kyClient.get<{ userAlreadyResponseActivity: boolean }>(`activity-response/${id}`)
 
   const step = await kyClient.get<Step>(`steps/${id}`)
 
@@ -152,7 +152,7 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
           null
         )}
       </Card>
-
+ 
       {isAtividade && !userAlreadyResponseActivity && (
         <Card className="border-slate-200">
           <CardHeader>
@@ -162,7 +162,7 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
             <ActivityResponseForm stepId={Number(id)} />
           </CardContent>
         </Card>
-      )}
+      )} 
 
       {userAlreadyResponseActivity && (
         <Card>

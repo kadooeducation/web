@@ -12,7 +12,7 @@ import { PendingMentorsList } from "@/presentation/modules/home/components/pendi
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
-  const user = await kyClient.get<{ name: string }>("me")
+  const user = await kyClient.get<{ acronym: string }>("me")
 
   const edicts = await kyClient.get<{
     id: number
@@ -24,26 +24,11 @@ export default async function AdminPage() {
     endDate: Date
   }[]>("edict")
 
-
-  const firstName = user?.name.split(" ")[0]
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <SidebarProvider>
         <SidebarInset>
           <main className="p-6 space-y-8 min-h-screen">
-            <Card className="bg-gradient-to-r from-[#5127FF] to-[#5127FF]/80 text-white border-0 shadow-xl">
-              <CardContent className="p-8">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                  <div className="space-y-4">
-                    <h2 className="text-3xl font-bold">Bem-vindo, {firstName}! 👋</h2>
-                    <p className="text-xl text-white/90">Pronto para transformar sua ideia em realidade?</p>
-                  </div>
-
-                </div>
-              </CardContent>
-            </Card>
-
             <div className="flex flex-col gap-2">
               <section className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -60,7 +45,7 @@ export default async function AdminPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {edicts?.length ? (edicts?.map((edict) => (
                     <Link key={edict.id} href={`/edital/${edict.id}`} className="group">
-                      <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
+                      <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white lg:max-h-64">
 
 
                         <CardContent className="p-6">

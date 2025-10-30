@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -166,7 +167,9 @@ export function CreateInPersonEventDialog({ edictId, onCreateStepAction, childre
             <Button className="bg-[#5127FF] hover:bg-[#5127FF]/90" type="submit" disabled={isSubmitting}>
               {isPending ? "Adicionando..." : "Adicionar Evento"}
             </Button>
-            <Button variant="ghost" type="button">Cancelar</Button>
+            <DialogClose asChild>
+              <Button variant="ghost" type="button">Cancelar</Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>

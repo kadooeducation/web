@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -77,9 +78,10 @@ export function CreateActivityDialog({ edictId, children }: CreateActivityDialog
         ...data,
         file: edictUrl,
         date: new Date(data.date)
+      }).then(() => {
+        toast.success(`Etapa ${data.title} criada com sucesso!`)
+        reset()
       })
-      toast.success(`Etapa ${data.title} criada com sucesso!`)
-      reset()
     })
   }
 
@@ -188,7 +190,9 @@ export function CreateActivityDialog({ edictId, children }: CreateActivityDialog
             <Button className="bg-[#5127FF] hover:bg-[#5127FF]/90" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Adicionando..." : "Adicionar Atividade"}
             </Button>
-            <Button variant="ghost" type="button">Cancelar</Button>
+            <DialogClose asChild>
+              <Button variant="ghost" type="button">Cancelar</Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>
