@@ -6,56 +6,6 @@ import { EnrollmentOverview } from "./enrollment-overview";
 import { HighlightMentors } from "./highlight-mentors";
 import { WelcomeBanner } from "./welcome-banner";
 
-export const edicts = [
-  {
-    id: 1,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa para startups inovadoras",
-    category: "Tecnologia",
-    icon: "💡",
-    status: "Inscrito",
-    statusColor: "bg-green-500 text-white",
-    startDate: new Date(),
-    endDate: new Date(),
-    enrolled: true,
-  },
-  {
-    id: 2,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa para startups inovadoras",
-    category: "Tecnologia",
-    icon: "💡",
-    status: "Inscrito",
-    statusColor: "bg-green-500 text-white",
-    startDate: new Date(),
-    endDate: new Date(),
-    enrolled: true,
-  },
-  {
-    id: 3,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa exclusivo",
-    category: "Tecnologia",
-    icon: "🎯",
-    status: "Aberto",
-    statusColor: "bg-[#F4DA02] text-white",
-    startDate: new Date(),
-    endDate: new Date(),
-    enrolled: false,
-  },
-  {
-    id: 4,
-    title: "Exemplo",
-    description: "Descrição de exemplo para demonstração",
-    category: "Exemplo",
-    icon: "📋",
-    status: "",
-    statusColor: "bg-gray-400",
-    startDate: new Date(),
-    endDate: new Date(),
-    enrolled: false,
-  },
-];
 
 export async function HomeSection() {
   return (
