@@ -33,11 +33,10 @@ export class KyAdapter {
     });
   }
 
-  async post<T>(url: string, body: object): Promise<T | null> {
+  async post<T>(url: string, body: object): Promise<T> {
     try {
       const res = await this.api.post(url, { json: body });
-      const text = await res.text();
-      return text ? JSON.parse(text) : null;
+      return res.json<T>()
     } catch (err) {
       if (err instanceof HTTPError) throw err;
       throw err;
