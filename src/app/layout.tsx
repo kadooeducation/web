@@ -24,7 +24,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`${poppins.variable}`}>
+      <body className={`${poppins.variable}`} suppressHydrationWarning={true}>
         {children}
         <Toaster richColors position="top-right" />
       </body>
