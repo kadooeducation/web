@@ -105,9 +105,9 @@ export async function HomeSection() {
               Ver Todos
             </Button>
           </div>
-          <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
+          {/* <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
             <EnrollmentOverview />
-          </Suspense>
+          </Suspense> */}
         </div>
 
         <div className="space-y-8">
@@ -131,9 +131,9 @@ export async function HomeSection() {
             </Link>
           </div>
 
-          <Suspense fallback={<Skeleton.HighlightMentorsSkeleton />}>
+          {/* <Suspense fallback={<Skeleton.HighlightMentorsSkeleton />}>
             <HighlightMentors />
-          </Suspense>
+          </Suspense> */}
 
           <div className="mt-8 p-8 bg-gradient-to-r from-[#5127FF]/10 to-[#F4DA02]/10 rounded-2xl border border-[#5127FF]/20 shadow-sm">
             <div className="text-center space-y-4">
