@@ -14,7 +14,7 @@ export async function HomeSection() {
       {/* <Header profile={<Profile {...user} />} /> */}
 
       <section className="p-6 space-y-8">
-        {/* <WelcomeBanner /> */}
+        <WelcomeBanner />
 
         {/* <div className="grid gap-6  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
           <Card className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white">

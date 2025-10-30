@@ -61,7 +61,7 @@ export function Navbar({ initial }: NavbarProps) {
           <DropdownMenuTrigger>
             <Avatar className="">
               <AvatarFallback className=" bg-[#5127FF] rounded-full text-sm text-white font-semibold uppercase">
-                H
+                {initial}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
