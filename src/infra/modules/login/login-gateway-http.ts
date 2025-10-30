@@ -15,7 +15,6 @@ export class LoginGatewayHttp implements LoginGateway {
     const result = await this.client.post<LoginResponseDTO>('/auth/login', user)
 
     if (result.isLeft()) {
-      console.log(result.value)
       throw new Error(result?.value?.message)
     }
 

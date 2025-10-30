@@ -70,15 +70,12 @@ export function Form() {
     handleSubmit,
     control,
     watch,
-    formState: { errors },
   } = useForm<CreateEdictValidation>({
     resolver: zodResolver(createEdictValidation),
     defaultValues: {
       categories: [],
     },
   })
-
-  console.log(errors)
 
   async function handleCreateEdictForm(data: CreateEdictValidation) {
     setLoading(true)

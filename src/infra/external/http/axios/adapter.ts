@@ -17,7 +17,6 @@ export class AxiosAdapter implements HttpClient {
     })
 
     this.api.interceptors.request.use((config) => {
-      console.log(config)
       const token = this.browser.get(process.env.NEXT_PUBLIC_TOKEN_NAME)
 
       if (token) {
@@ -56,7 +55,6 @@ export class AxiosAdapter implements HttpClient {
       if (isAxiosError(error)) {
         return left(new Error(error.response?.data.message))
       }
-      console.log(error)
 
       return left(new Error('Ocorreu um erro interno.'))
     }

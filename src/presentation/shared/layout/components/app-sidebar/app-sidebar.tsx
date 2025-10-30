@@ -46,7 +46,6 @@ export async function AppSidebar() {
     'me',
   )
 
-  console.log(user)
 
   return (
     <Sidebar collapsible="icon">

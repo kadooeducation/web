@@ -93,7 +93,6 @@ export function Form({ edict }: FormProps) {
     watch,
     control,
     handleSubmit,
-    formState: { errors },
   } = useForm<EditEdictValidation>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -130,8 +129,6 @@ export function Form({ edict }: FormProps) {
     const data: T = await response.json()
     return data
   }
-
-  console.log(errors)
 
   async function handleUpdateEdictForm(data: EditEdictValidation) {
     let edictUrl = ''

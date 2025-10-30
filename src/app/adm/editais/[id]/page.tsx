@@ -47,8 +47,6 @@ export default async function EdictByIdPage({
 
   if (!edict) notFound()
 
-  console.log(steps)
-
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
