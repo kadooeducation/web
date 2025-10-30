@@ -1,58 +1,65 @@
 'use client'
 
-import { Button } from "@/presentation/external/components/ui/button"
-import { Textarea } from "@/presentation/external/components/ui/textarea"
-import { Input, Label } from "@/presentation/shared/components"
-import { Checkbox } from "@/presentation/external/components/ui/checkbox"
-import { Separator } from "@/presentation/external/components/ui/separator"
-import { FileText, Calendar, Tag, Footprints, PlusCircleIcon, Trash2, Loader2, X } from "lucide-react"
-import { Controller, useFieldArray, useForm } from "react-hook-form"
-import remarkGfm from "remark-gfm"
-
-import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
+import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { Calendar, FileText, Loader2, Tag, X } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 
 import ReactMarkdown from 'react-markdown'
-import { ScrollArea } from "@/presentation/external/components/ui/scroll-area"
-import clsx from "clsx"
-import { Popover, PopoverContent, PopoverTrigger } from "@/presentation/external/components/ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/presentation/external/lib/utils"
-import { ptBR } from "date-fns/locale"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/external/components/ui/select"
-import z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
-import { EdictDTO } from "@/infra/modules/edict/dto/edict-dto"
-import Link from "next/link"
-import { edictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import remarkGfm from 'remark-gfm'
+import { toast } from 'sonner'
+import z from 'zod'
+import { edictGatewayHttp } from '@/infra/modules/edict/edict-gateway-http'
+import { Button } from '@/presentation/external/components/ui/button'
+import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/presentation/external/components/ui/card'
+import { Checkbox } from '@/presentation/external/components/ui/checkbox'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/presentation/external/components/ui/popover'
+import { ScrollArea } from '@/presentation/external/components/ui/scroll-area'
+import { Separator } from '@/presentation/external/components/ui/separator'
+import { Textarea } from '@/presentation/external/components/ui/textarea'
+import { cn } from '@/presentation/external/lib/utils'
+import { Input, Label } from '@/presentation/shared/components'
 
 const availableCategories = [
-  "Tecnologia",
-  "Impacto Social",
-  "Sustentabilidade",
-  "Saúde",
-  "Educação",
-  "Fintech",
-  "E-commerce",
-  "Agritech",
-  "Foodtech",
-  "Mobilidade",
+  'Tecnologia',
+  'Impacto Social',
+  'Sustentabilidade',
+  'Saúde',
+  'Educação',
+  'Fintech',
+  'E-commerce',
+  'Agritech',
+  'Foodtech',
+  'Mobilidade',
 ]
 
-
 const schema = z.object({
-  title: z.string().min(1, "Título é obrigatório."),
-  description: z.string().min(1, "Descrição é obrigatória."),
-  organizer: z.string().min(1, "Insira o Organizador do Edital."),
+  title: z.string().min(1, 'Título é obrigatório.'),
+  description: z.string().min(1, 'Descrição é obrigatória.'),
+  organizer: z.string().min(1, 'Insira o Organizador do Edital.'),
   contact: z.string(),
   location: z.string(),
   startDate: z.date(),
   endDate: z.date(),
   file: z.string(),
-  categories: z.array(z.string()).min(1, "Pelo menos uma categoria deve ser selecionada."),
+  categories: z
+    .array(z.string())
+    .min(1, 'Pelo menos uma categoria deve ser selecionada.'),
 })
 
 type EditEdictValidation = z.infer<typeof schema>
@@ -81,8 +88,13 @@ export function Form({ edict }: FormProps) {
 
   const [edictFile, setEdictFile] = useState<File | null>(null)
 
-
-  const { register, watch, control, handleSubmit, formState: { errors } } = useForm<EditEdictValidation>({
+  const {
+    register,
+    watch,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EditEdictValidation>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: edict.title,
@@ -103,33 +115,34 @@ export function Form({ edict }: FormProps) {
   }
 
   async function uploadFile<T>(file: File): Promise<T> {
-    const formData = new FormData();
-    formData.set("file", file);
+    const formData = new FormData()
+    formData.set('file', file)
 
     const response = await fetch(`/api/upload-file`, {
-      method: "POST",
+      method: 'POST',
       body: formData,
     })
 
     if (!response.ok) {
-      throw new Error(`Erro ao enviar`);
+      throw new Error(`Erro ao enviar`)
     }
 
-    const data: T = await response.json();
+    const data: T = await response.json()
     return data
   }
-
 
   console.log(errors)
 
   async function handleUpdateEdictForm(data: EditEdictValidation) {
-
-    let edictUrl = "";
+    let edictUrl = ''
 
     if (edictFile) {
-      const { url: edictPdf } = await uploadFile<{ url: string; error: boolean }>(edictFile);
+      const { url: edictPdf } = await uploadFile<{
+        url: string
+        error: boolean
+      }>(edictFile)
 
-      edictUrl = edictPdf;
+      edictUrl = edictPdf
     }
 
     try {
@@ -141,10 +154,9 @@ export function Form({ edict }: FormProps) {
         endDate: new Date(data.endDate),
         file: edictFile ? edictUrl : edict.file,
       })
-      toast.success("Edital atualizado com sucesso!")
+      toast.success('Edital atualizado com sucesso!')
 
-      push("/adm/editais")
-
+      push('/adm/editais')
     } catch (error) {
       console.error(error)
     } finally {
@@ -152,63 +164,76 @@ export function Form({ edict }: FormProps) {
     }
   }
 
-  const startDate = watch("startDate")
-  const endEdictDate = watch("endDate")
-  const descriptionWatched = watch("description")
-
+  const startDate = watch('startDate')
+  const endEdictDate = watch('endDate')
+  const descriptionWatched = watch('description')
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit(handleUpdateEdictForm)} encType="multipart/form-data">
+    <form
+      className="space-y-8"
+      onSubmit={handleSubmit(handleUpdateEdictForm)}
+      encType="multipart/form-data"
+    >
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <FileText className="w-5 h-5 text-[#5127FF]" />
-          <h2 className="text-xl font-semibold text-gray-900">Informações do Edital</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Informações do Edital
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6">
           <Input.Root>
-            <Input.Label htmlFor="title" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="title"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Título do Edital *
-            </Input.Label >
+            </Input.Label>
             <Input.Core
               id="title"
               placeholder="Ex: Programa de Aceleração Tech 2024"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("title")}
+              {...register('title')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="description"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Descrição do Edital *
             </Label>
 
             <div className="flex items-center gap-4 mb-2 text-sm">
-
-              <span
+              <Button
                 role="button"
                 onClick={() => setPreviewMode(false)}
                 className={clsx(
-                  "cursor-pointer transition-all",
-                  !previewMode ? "text-[#5127FF] font-semibold" : "text-gray-400"
+                  'cursor-pointer transition-all',
+                  !previewMode
+                    ? 'text-[#5127FF] font-semibold'
+                    : 'text-gray-400',
                 )}
               >
                 Editar
-              </span>
+              </Button>
 
               <span className="text-gray-300">|</span>
 
-              <span
+              <Button
                 role="button"
                 onClick={() => setPreviewMode(true)}
                 className={clsx(
-                  "cursor-pointer transition-all",
-                  previewMode ? "text-[#5127FF] font-semibold" : "text-gray-400"
+                  'cursor-pointer transition-all',
+                  previewMode
+                    ? 'text-[#5127FF] font-semibold'
+                    : 'text-gray-400',
                 )}
               >
                 Preview
-              </span>
-
+              </Button>
             </div>
 
             {!previewMode ? (
@@ -217,63 +242,73 @@ export function Form({ edict }: FormProps) {
                 placeholder="Digite a descrição do edital aqui usando markdown..."
                 rows={12}
                 className="resize-none rounded-md border border-gray-300 focus:border-[#5127FF]"
-                {...register("description")}
+                {...register('description')}
               />
             ) : (
               <ScrollArea className="h-[300px] rounded-md border border-gray-300 p-4 bg-gray-50">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    h1: (props) => <h1 className="text-2xl font-bold" {...props} />,
-                    h2: (props) => <h2 className="text-xl font-semibold" {...props} />,
+                    h1: (props) => (
+                      <h1 className="text-2xl font-bold" {...props} />
+                    ),
+                    h2: (props) => (
+                      <h2 className="text-xl font-semibold" {...props} />
+                    ),
                     p: (props) => <p className="leading-relaxed" {...props} />,
                   }}
                 >
-                  {descriptionWatched || "_Sem conteúdo para pré-visualizar._"}
+                  {descriptionWatched || '_Sem conteúdo para pré-visualizar._'}
                 </ReactMarkdown>
               </ScrollArea>
             )}
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="organizer" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="organizer"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Organizador do Edital
             </Label>
             <Input.Core
               id="organizer"
               placeholder="Escreva quem irá organizar o Edital"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("organizer")}
+              {...register('organizer')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="contact" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="contact"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Email para contato
             </Label>
             <Input.Core
               id="contact"
               placeholder="Email para contato"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("contact")}
+              {...register('contact')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="contact" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="contact"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Localização do Edital
             </Label>
             <Input.Core
               id="location"
               placeholder="Ex: São Luís, Imperatriz"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("location")}
+              {...register('location')}
             />
           </Input.Root>
-
         </div>
-
-
       </div>
 
       <Separator className="bg-gray-300" />
@@ -286,21 +321,26 @@ export function Form({ edict }: FormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Input.Root>
-            <Input.Label htmlFor="startDate" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="startDate"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Data de Início *
             </Input.Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !startDate && "text-muted-foreground"
-
-                )}>
-                  <span className="text-left w-full">{startDate ? (
-                    format(startDate, "PPP", { locale: ptBR })
-                  ) : (
-                    "Selecione uma data"
-                  )}</span>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'w-[240px] pl-3 text-left font-normal',
+                    !startDate && 'text-muted-foreground',
+                  )}
+                >
+                  <span className="text-left w-full">
+                    {startDate
+                      ? format(startDate, 'PPP', { locale: ptBR })
+                      : 'Selecione uma data'}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -324,20 +364,27 @@ export function Form({ edict }: FormProps) {
           </Input.Root>
 
           <Input.Root>
-            <Input.Label htmlFor="endDate" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="endDate"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Data de Fim *
             </Input.Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button disabled={!startDate} variant="outline" className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !endEdictDate && "text-muted-foreground"
-                )}>
-                  <span className="text-left w-full">{endEdictDate ? (
-                    format(endEdictDate, "PPP", { locale: ptBR })
-                  ) : (
-                    "Selecione uma data"
-                  )}</span>
+                <Button
+                  disabled={!startDate}
+                  variant="outline"
+                  className={cn(
+                    'w-[240px] pl-3 text-left font-normal',
+                    !endEdictDate && 'text-muted-foreground',
+                  )}
+                >
+                  <span className="text-left w-full">
+                    {endEdictDate
+                      ? format(endEdictDate, 'PPP', { locale: ptBR })
+                      : 'Selecione uma data'}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -350,22 +397,20 @@ export function Form({ edict }: FormProps) {
                       selected={endEdictDate}
                       onDayBlur={onBlur}
                       onSelect={onChange}
-                      disabled={(date) =>
-                        !startDate || date <= startDate
-                      }
+                      disabled={(date) => !startDate || date <= startDate}
                       locale={ptBR}
                       captionLayout="dropdown"
                     />
                   )}
                 />
-
               </PopoverContent>
             </Popover>
           </Input.Root>
         </div>
 
-        <Input.Root >
-          <Input.Label className="text-sm font-medium text-gray-700 block">Arquivo PDF do edital
+        <Input.Root>
+          <Input.Label className="text-sm font-medium text-gray-700 block">
+            Arquivo PDF do edital
           </Input.Label>
 
           {edict.file ? (
@@ -394,7 +439,6 @@ export function Form({ edict }: FormProps) {
       </div>
 
       <Separator />
-
 
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
@@ -437,7 +481,6 @@ export function Form({ edict }: FormProps) {
 
       <Separator />
 
-
       <div className="flex flex-col sm:flex-row gap-4 pt-6">
         <Button
           type="submit"
@@ -445,7 +488,7 @@ export function Form({ edict }: FormProps) {
           className="bg-[#F4DA02] text-black hover:bg-[#F4DA02]/90 font-semibold px-8 py-3 h-auto"
         >
           {loading && <Loader2 className="h-5 w-5 animate-spin" />}
-          {loading ? "Atualizando..." : "Atualizar Edital"}
+          {loading ? 'Atualizando...' : 'Atualizar Edital'}
         </Button>
       </div>
 
@@ -457,7 +500,10 @@ export function Form({ edict }: FormProps) {
         </CardHeader>
         <CardContent>
           <Link href={`/adm/editais/${edict?.id}`}>
-            <Button variant="outline" className="text-[#5127FF] hover:bg-[#5127FF]/10">
+            <Button
+              variant="outline"
+              className="text-[#5127FF] hover:bg-[#5127FF]/10"
+            >
               Ir para Etapas
             </Button>
           </Link>

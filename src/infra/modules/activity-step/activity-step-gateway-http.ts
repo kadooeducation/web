@@ -1,8 +1,8 @@
-import { HttpClient, client } from "@/infra/external/http"
-import { ActivityStepGateway } from "./activity-step-gateway"
+import { client, type HttpClient } from '@/infra/external/http'
+import type { ActivityStepGateway } from './activity-step-gateway'
 
 export class ActivityStepGatewayHttp implements ActivityStepGateway {
-  constructor(private readonly client: HttpClient) { }
+  constructor(private readonly client: HttpClient) {}
 
   async delete(stepId: number): Promise<void> {
     await this.client.delete(`/activity-step/${stepId}`)

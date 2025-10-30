@@ -1,23 +1,25 @@
-import type { Metadata } from "next";
-import { Toaster } from "sonner";
-import { SidebarProvider } from "@/presentation/external/components/ui/sidebar";
-import { cookies } from "next/headers";
-import { AppSidebar } from "@/presentation/shared/layout/components/app-sidebar/app-sidebar";
-import { Navbar } from "@/presentation/shared/layout/components/navbar/navbar";
-import { kyClient } from "@/infra/external/http/ky-client/api";
+import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
+import { Toaster } from 'sonner'
+import { kyClient } from '@/infra/external/http/ky-client/api'
+import { SidebarProvider } from '@/presentation/external/components/ui/sidebar'
+import { AppSidebar } from '@/presentation/shared/layout/components/app-sidebar/app-sidebar'
+import { Navbar } from '@/presentation/shared/layout/components/navbar/navbar'
 
 export const metadata: Metadata = {
-  title: "Início",
-  description: "Página de Início",
-};
+  title: 'Início',
+  description: 'Página de Início',
+}
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
 
-  const user = await kyClient.get<{ acronym: string }>("me")
-
+  const user = await kyClient.get<{ acronym: string }>('me')
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>

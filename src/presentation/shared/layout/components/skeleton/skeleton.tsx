@@ -1,10 +1,13 @@
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 function Root({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
-      className={twMerge('bg-zinc-200/50 dark:bg-zinc-700/30 animate-pulse rounded-md', className)}
+      className={twMerge(
+        'bg-zinc-200/50 dark:bg-zinc-700/30 animate-pulse rounded-md',
+        className,
+      )}
       {...props}
     />
   )
@@ -39,5 +42,5 @@ function HighlightMentorsSkeleton() {
 export const Skeleton = {
   Root,
   EnrollmentOverviewSkeleton,
-  HighlightMentorsSkeleton
+  HighlightMentorsSkeleton,
 }

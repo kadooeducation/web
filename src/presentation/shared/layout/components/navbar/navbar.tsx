@@ -1,20 +1,29 @@
-"use client"
+'use client'
 
-import { loginGatewayHttp } from "@/infra/modules/login/login-gateway-http";
-import { Avatar, AvatarFallback } from "@/presentation/external/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/presentation/external/components/ui/dropdown-menu";
-import { SidebarTrigger } from "@/presentation/external/components/ui/sidebar";
-import { APP_ROUTES } from "@/shared/constants/routes";
-import { User, Settings, LogOut } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { LogOut, Settings, User } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { loginGatewayHttp } from '@/infra/modules/login/login-gateway-http'
+import {
+  Avatar,
+  AvatarFallback,
+} from '@/presentation/external/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/presentation/external/components/ui/dropdown-menu'
+import { SidebarTrigger } from '@/presentation/external/components/ui/sidebar'
+import { APP_ROUTES } from '@/shared/constants/routes'
 
 interface NavbarProps {
   initial: string
 }
 
 export function Navbar({ initial }: NavbarProps) {
-
   const { push } = useRouter()
 
   async function handleLogOut() {

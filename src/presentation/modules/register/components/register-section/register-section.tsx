@@ -1,10 +1,9 @@
-import Image from "next/image";
-import { Form } from "../form/form";
+import Image from 'next/image'
+import { Form } from '../form/form'
 
 export function RegisterSection() {
   return (
     <section className="grid h-screen grid-cols-1 lg:grid-cols-2">
-
       <div className="relative w-full hidden h-full lg:block">
         <Image
           src="/banner.svg"

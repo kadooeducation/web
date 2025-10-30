@@ -1,35 +1,60 @@
-"use client"
+/** biome-ignore-all lint/suspicious/noExplicitAny: usado em tipagem externa sem controle */
+'use client'
 
-import { deleteActivityStepAction } from "@/app/adm/editais/[id]/(actions)/delete-activity-step-action"
-import { deleteEventAction } from "@/app/adm/editais/[id]/(actions)/delete-event-action"
-import { Button } from "@/presentation/external/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/presentation/external/components/ui/dialog"
-import { Separator } from "@/presentation/external/components/ui/separator"
-
-import { Footprints, Calendar as CalIcon, Clock3, Link2, MapPin, Loader2 } from "lucide-react"
-import { useTransition } from "react"
-import { toast } from "sonner"
+import {
+  Calendar as CalIcon,
+  Clock3,
+  Footprints,
+  Link2,
+  Loader2,
+  MapPin,
+} from 'lucide-react'
+import { useTransition } from 'react'
+import { toast } from 'sonner'
+import { deleteActivityStepAction } from '@/app/adm/editais/[id]/(actions)/delete-activity-step-action'
+import { deleteEventAction } from '@/app/adm/editais/[id]/(actions)/delete-event-action'
+import { Button } from '@/presentation/external/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/presentation/external/components/ui/card'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/presentation/external/components/ui/dialog'
+import { Separator } from '@/presentation/external/components/ui/separator'
 
 const fmtDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString("pt-BR") : "-"
+  iso ? new Date(iso).toLocaleDateString('pt-BR') : '-'
 
 const fmtMode = (s?: string | null) =>
-  s ? s.toString().toLowerCase().replace(/^\w/, c => c.toUpperCase()) : "-"
+  s
+    ? s
+        .toString()
+        .toLowerCase()
+        .replace(/^\w/, (c) => c.toUpperCase())
+    : '-'
 
 const stepPill = (step: any) => {
-  if (step.kind === "event") {
-    const isOnline = step.event?.type === "online"
+  if (step.kind === 'event') {
+    const isOnline = step.event?.type === 'online'
     return {
       icon: isOnline ? Link2 : MapPin,
-      text: `Evento ${isOnline ? "Online" : "Presencial"}`
+      text: `Evento ${isOnline ? 'Online' : 'Presencial'}`,
     }
   }
-  return { icon: Footprints, text: "Atividade" }
+  return { icon: Footprints, text: 'Atividade' }
 }
 
 export function StepCard({ step }: any) {
-
   const [isPending, startTransition] = useTransition()
 
   const pill = stepPill(step)
@@ -37,10 +62,9 @@ export function StepCard({ step }: any) {
 
   function handleDeleteEvent() {
     startTransition(async () => {
-      if (step.kind === "event") {
+      if (step.kind === 'event') {
         await deleteEventAction(step.id)
-      }
-      else {
+      } else {
         await deleteActivityStepAction(step.id)
       }
 
@@ -60,13 +84,16 @@ export function StepCard({ step }: any) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline">Editar</Button>
+          <Button size="sm" variant="outline">
+            Editar
+          </Button>
           <Dialog>
             <DialogContent className="sm:max-w-[400px]">
               <DialogHeader>
                 <DialogTitle>Deletar edital</DialogTitle>
                 <DialogDescription>
-                  Tem certeza que deseja deletar este edital? Essa ação não pode ser desfeita.
+                  Tem certeza que deseja deletar este edital? Essa ação não pode
+                  ser desfeita.
                 </DialogDescription>
               </DialogHeader>
 
@@ -86,13 +113,15 @@ export function StepCard({ step }: any) {
                       Deletando etapa...
                     </>
                   ) : (
-                    "Deletar"
+                    'Deletar'
                   )}
                 </Button>
               </DialogFooter>
             </DialogContent>
             <DialogTrigger asChild>
-              <Button size="sm" variant="destructive">Deletar</Button>
+              <Button size="sm" variant="destructive">
+                Deletar
+              </Button>
             </DialogTrigger>
           </Dialog>
         </div>
@@ -104,7 +133,7 @@ export function StepCard({ step }: any) {
           <span>Data: {fmtDate(step.date)}</span>
         </div>
 
-        {step.kind === "event" && (
+        {step.kind === 'event' && (
           <>
             {step.event?.meetingLink && (
               <div className="flex items-center gap-2">
@@ -134,7 +163,7 @@ export function StepCard({ step }: any) {
           </>
         )}
 
-        {step.kind === "activity" && (
+        {step.kind === 'activity' && (
           <>
             <div className="flex items-center gap-2">
               <Clock3 className="h-4 w-4 text-gray-500" />
@@ -157,7 +186,8 @@ export function StepCard({ step }: any) {
 
             <Separator className="my-2" />
             <div className="text-xs text-gray-500">
-              formato: Atividade{step.activity?.file ? " • arquivo obrigatório" : ""}
+              formato: Atividade
+              {step.activity?.file ? ' • arquivo obrigatório' : ''}
             </div>
           </>
         )}

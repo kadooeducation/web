@@ -1,11 +1,9 @@
 'use client'
-import { Button } from "@/presentation/external/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/presentation/external/components/ui/button'
 
 export function BackToSteps() {
-
   const { back } = useRouter()
 
   return (

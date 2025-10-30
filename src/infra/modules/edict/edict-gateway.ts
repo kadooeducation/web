@@ -1,5 +1,5 @@
-import { CreateEdictDTO } from "./dto/create-edict-dto";
-import { EdictDTO } from "./dto/edict-dto";
+import type { CreateEdictDTO } from './dto/create-edict-dto'
+import type { EdictDTO } from './dto/edict-dto'
 
 export interface UpdateEdictDTO {
   id: number

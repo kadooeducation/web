@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
 import Image from 'next/image'
+import { useEffect } from 'react'
 
 export function Loading() {
   useEffect(() => {
@@ -24,6 +24,5 @@ export function Loading() {
         <p className="text-white text-2xl mt-12">Carregando...</p>
       </div>
     </section>
-
   )
 }

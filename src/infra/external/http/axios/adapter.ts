@@ -1,31 +1,33 @@
-import { Either, left, right } from "@/infra/shared/utils/either";
-import { HttpClient } from "@/infra/external/http/http-client";
-import axios, { AxiosError, AxiosInstance, isAxiosError } from "axios";
-import { JsCookieBrowserStorage, jsCookieBrowserStorage } from "@/infra/external/storage/js-cookie-browser-storage";
+import axios, { type AxiosError, type AxiosInstance, isAxiosError } from 'axios'
+import type { HttpClient } from '@/infra/external/http/http-client'
+import {
+  type JsCookieBrowserStorage,
+  jsCookieBrowserStorage,
+} from '@/infra/external/storage/js-cookie-browser-storage'
+import { type Either, left, right } from '@/infra/shared/utils/either'
 
-const tokenName = process.env.NEXT_PUBLIC_TOKEN_NAME;
+const tokenName = process.env.NEXT_PUBLIC_TOKEN_NAME
 
 export class AxiosAdapter implements HttpClient {
-  private readonly api: AxiosInstance;
+  private readonly api: AxiosInstance
 
   constructor(private readonly browser: JsCookieBrowserStorage) {
     this.api = axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL,
-    });
+    })
 
     this.api.interceptors.request.use((config) => {
-
       console.log(config)
       const token = this.browser.get(process.env.NEXT_PUBLIC_TOKEN_NAME)
-      
+
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`
       }
-      return config;
-    });
+      return config
+    })
 
     this.api.interceptors.response.use(
-      res => res,
+      (res) => res,
       async (err: AxiosError) => {
         const tokenName = process.env.NEXT_PUBLIC_TOKEN_NAME as string
 
@@ -37,7 +39,7 @@ export class AxiosAdapter implements HttpClient {
         }
 
         return Promise.reject(err)
-      }
+      },
     )
   }
 
@@ -48,15 +50,15 @@ export class AxiosAdapter implements HttpClient {
     try {
       const { data } = await this.api.get<Result>(url, {
         params,
-      });
-      return right(data);
+      })
+      return right(data)
     } catch (error) {
       if (isAxiosError(error)) {
-        return left(new Error(error.response?.data.message));
+        return left(new Error(error.response?.data.message))
       }
       console.log(error)
 
-      return left(new Error("Ocorreu um erro interno."));
+      return left(new Error('Ocorreu um erro interno.'))
     }
   }
 
@@ -65,29 +67,29 @@ export class AxiosAdapter implements HttpClient {
     body: object,
   ): Promise<Either<Error, Result>> {
     try {
-      const { data } = await this.api.post<Result>(url, body);
+      const { data } = await this.api.post<Result>(url, body)
 
-      return right(data);
+      return right(data)
     } catch (error) {
       if (isAxiosError(error)) {
-        return left(new Error(error.response?.data.message));
+        return left(new Error(error.response?.data.message))
       }
 
-      return left(new Error("Ocorreu um erro interno."));
+      return left(new Error('Ocorreu um erro interno.'))
     }
   }
 
   async delete<Result>(url: string): Promise<Either<Error, Result>> {
     try {
-      const { data } = await this.api.delete<Result>(url);
+      const { data } = await this.api.delete<Result>(url)
 
-      return right(data);
+      return right(data)
     } catch (error) {
       if (isAxiosError(error)) {
-        return left(new Error(error.response?.data.message));
+        return left(new Error(error.response?.data.message))
       }
 
-      return left(new Error("Ocorreu um erro interno."));
+      return left(new Error('Ocorreu um erro interno.'))
     }
   }
 
@@ -96,15 +98,15 @@ export class AxiosAdapter implements HttpClient {
     body: object,
   ): Promise<Either<Error, Result>> {
     try {
-      const { data } = await this.api.patch<Result>(url, body);
+      const { data } = await this.api.patch<Result>(url, body)
 
-      return right(data);
+      return right(data)
     } catch (error) {
       if (isAxiosError(error)) {
-        return left(new Error(error.response?.data.message));
+        return left(new Error(error.response?.data.message))
       }
 
-      return left(new Error("Ocorreu um erro interno."));
+      return left(new Error('Ocorreu um erro interno.'))
     }
   }
 
@@ -118,12 +120,9 @@ export class AxiosAdapter implements HttpClient {
         return left(new Error(error.response?.data.message))
       }
 
-      return left(new Error("Ocorreu um erro interno."))
+      return left(new Error('Ocorreu um erro interno.'))
     }
   }
 }
-const getToken = () => jsCookieBrowserStorage.get(tokenName);
-export const client = new AxiosAdapter(jsCookieBrowserStorage);
-
-
-
+const _getToken = () => jsCookieBrowserStorage.get(tokenName)
+export const client = new AxiosAdapter(jsCookieBrowserStorage)

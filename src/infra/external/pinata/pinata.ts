@@ -1,10 +1,10 @@
-"server only"
+'server only'
 
-import { PinataSDK } from "pinata"
+import { PinataSDK } from 'pinata'
 
 console.log(process.env.PINATA_JWT, process.env.NEXT_PUBLIC_GATEWAY_URL)
 
 export const pinata = new PinataSDK({
   pinataJwt: `${process.env.PINATA_JWT}`,
-  pinataGateway: `${process.env.NEXT_PUBLIC_GATEWAY_URL}`
+  pinataGateway: `${process.env.NEXT_PUBLIC_GATEWAY_URL}`,
 })

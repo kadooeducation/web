@@ -1,4 +1,8 @@
-import { MiddlewareConfig, NextRequest, NextResponse } from 'next/server'
+import {
+  type MiddlewareConfig,
+  type NextRequest,
+  NextResponse,
+} from 'next/server'
 import { decrypt } from './infra/shared/security/decrypt'
 import { APP_ROUTES } from './shared/constants/routes'
 
@@ -46,7 +50,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (authToken && !publicRoute) {
-    const token = await decrypt(authToken.value)
+    const _token = await decrypt(authToken.value)
 
     // if (!token || token === 'invalid') {
     //   const redirect = request.nextUrl.clone()
@@ -65,11 +69,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config: MiddlewareConfig = {
-  matcher: [
-    '/login',
-    '/registro',
-    '/',
-    '/adm/:path*',
-    '/edital/:path*'
-  ],
+  matcher: ['/login', '/registro', '/', '/adm/:path*', '/edital/:path*'],
 }

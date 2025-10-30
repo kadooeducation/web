@@ -1,39 +1,43 @@
-import { notFound } from "next/navigation"
-import { Calendar, Link2, MapPin, FileText, Info } from "lucide-react"
+import { Calendar, FileText, Info, Link2, MapPin } from 'lucide-react'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { kyClient } from '@/infra/external/http/ky-client/api'
+import type { Step } from '@/infra/modules/step/step-gateway'
+import { Badge } from '@/presentation/external/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/presentation/external/components/ui/card'
+import { Separator } from '@/presentation/external/components/ui/separator'
+import { ActivityResponseForm } from '@/presentation/modules/step-by-id/components/view/activity-response-form'
+import { BackToSteps } from '@/presentation/modules/step-by-id/components/view/back-to-steps'
 
-import { Badge } from "@/presentation/external/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
-import { Separator } from "@/presentation/external/components/ui/separator"
-import { StepGatewayHttp } from "@/infra/modules/step/step-gateway-http"
-import { ActivityResponseForm } from "@/presentation/modules/step-by-id/components/view/activity-response-form"
-import { BackToSteps } from "@/presentation/modules/step-by-id/components/view/back-to-steps"
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory"
-import { Metadata } from "next"
-import { kyClient } from "@/infra/external/http/ky-client/api"
-import type { Step } from "@/infra/modules/step/step-gateway"
-
-export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> }
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
   const { id } = await params
 
   const step = await kyClient.get<{
     id: number
-  title: string
-  description: string
-  date: Date
-  status: string
-  event: Event
-  kind: string
-  activity?: {
-    dueDate: Date
-    file: string
-  }
+    title: string
+    description: string
+    date: Date
+    status: string
+    event: Event
+    kind: string
+    activity?: {
+      dueDate: Date
+      file: string
+    }
   }>(`steps/${id}`)
 
   if (!step) {
     return {
-      title: "Edital não encontrado - Kadoo Academy",
+      title: 'Edital não encontrado - Kadoo Academy',
     }
   }
 
@@ -43,23 +47,30 @@ export async function generateMetadata(
   }
 }
 
-export default async function StepPage({ params }: { params: Promise<{ id: string }> }) {
-
+export default async function StepPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
 
-  const userAlreadyResponseActivity = await kyClient.get<{ userAlreadyResponseActivity: boolean }>(`activity-response/${id}`)
+  const userAlreadyResponseActivity = await kyClient.get<{
+    userAlreadyResponseActivity: boolean
+  }>(`activity-response/${id}`)
 
   const step = await kyClient.get<Step>(`steps/${id}`)
 
   if (!step) return notFound()
 
-  const isEvento = step?.event?.format === "Evento"
+  const isEvento = step?.event?.format === 'Evento'
   const isAtividade = step?.activity
 
   function statusBadgeStyle(status: string) {
-    if (status === "concluida") return "bg-green-100 text-green-700 border-green-200"
-    if (status === "em_andamento") return "bg-amber-100 text-amber-700 border-amber-200"
-    return "bg-slate-100 text-slate-700 border-slate-200"
+    if (status === 'concluida')
+      return 'bg-green-100 text-green-700 border-green-200'
+    if (status === 'em_andamento')
+      return 'bg-amber-100 text-amber-700 border-amber-200'
+    return 'bg-slate-100 text-slate-700 border-slate-200'
   }
 
   return (
@@ -69,14 +80,14 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
 
         <div className="flex items-center gap-2">
           <Badge className={`border ${statusBadgeStyle(step.status)}`}>
-            {step.status === "concluida"
-              ? "Concluída"
-              : step.status === "em_andamento"
-                ? "Em andamento"
-                : "Pendente"}
+            {step.status === 'concluida'
+              ? 'Concluída'
+              : step.status === 'em_andamento'
+                ? 'Em andamento'
+                : 'Pendente'}
           </Badge>
           <Badge className="border bg-[#5127FF]/10 text-[#5127FF] border-[#5127FF]/20">
-            {step?.event?.format === "Evento" ? "Evento" : "Atividade"}
+            {step?.event?.format === 'Evento' ? 'Evento' : 'Atividade'}
           </Badge>
         </div>
       </div>
@@ -96,17 +107,17 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
             <Separator />
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
-                {"date" in step && step.date && (
+                {'date' in step && step.date && (
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[#5127FF]" />
                     <span>
                       <span className="font-medium">Data: </span>
-                      {new Date(step.date).toLocaleDateString("pt-BR")}
+                      {new Date(step.date).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
                 )}
 
-                {"mode" in step.event && step.event.mode && (
+                {'mode' in step.event && step.event.mode && (
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-[#5127FF]" />
                     <span className="capitalize">
@@ -116,9 +127,9 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
                   </div>
                 )}
 
-                {"mode" in step.event &&
-                  step.event.format === "Presencial" &&
-                  "address" in step.event &&
+                {'mode' in step.event &&
+                  step.event.format === 'Presencial' &&
+                  'address' in step.event &&
                   step.event.address && (
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-[#5127FF]" />
@@ -129,9 +140,9 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
                     </div>
                   )}
 
-                {"mode" in step.event &&
-                  step.event.mode === "Online" &&
-                  "meetingLink" in step.event &&
+                {'mode' in step.event &&
+                  step.event.mode === 'Online' &&
+                  'meetingLink' in step.event &&
                   step.event.meetingLink && (
                     <div className="flex items-center gap-2">
                       <Link2 className="w-4 h-4 text-[#5127FF]" />
@@ -148,11 +159,9 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
               </div>
             </CardContent>
           </>
-        ) : (
-          null
-        )}
+        ) : null}
       </Card>
- 
+
       {isAtividade && !userAlreadyResponseActivity && (
         <Card className="border-slate-200">
           <CardHeader>
@@ -162,7 +171,7 @@ export default async function StepPage({ params }: { params: Promise<{ id: strin
             <ActivityResponseForm stepId={Number(id)} />
           </CardContent>
         </Card>
-      )} 
+      )}
 
       {userAlreadyResponseActivity && (
         <Card>

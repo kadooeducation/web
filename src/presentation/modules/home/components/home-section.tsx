@@ -1,81 +1,69 @@
-
-import { Button } from "@/presentation/external/components/ui/button";
-import { Calendar, TrendingUp, Users } from "lucide-react";
-import { Progress } from "@/presentation/external/components/ui/progress";
-import { UserGatewayHttp } from "@/infra/modules/user/user-gateway-http";
-import { Card, CardContent } from "@/presentation/external/components/ui/card";
-
-import Link from "next/link";
-import { WelcomeBanner } from "./welcome-banner";
-import { EnrollmentOverview } from "./enrollment-overview";
-import { HttpClientFactory } from "@/infra/external/http/axios/http-client-factory";
-import { Suspense } from "react";
-import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
-import { HighlightMentors } from "./highlight-mentors";
-import { kyClient } from "@/infra/external/http/ky-client/api";
+import Link from 'next/link'
+import { Suspense } from 'react'
+import { Button } from '@/presentation/external/components/ui/button'
+import { Skeleton } from '@/presentation/shared/layout/components/skeleton/skeleton'
+import { EnrollmentOverview } from './enrollment-overview'
+import { HighlightMentors } from './highlight-mentors'
+import { WelcomeBanner } from './welcome-banner'
 
 export const edicts = [
   {
     id: 1,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa para startups inovadoras",
-    category: "Tecnologia",
-    icon: "💡",
-    status: "Inscrito",
-    statusColor: "bg-green-500 text-white",
+    title: 'Programa de Aceleração Tech 2024',
+    description: 'Venha participar desse programa para startups inovadoras',
+    category: 'Tecnologia',
+    icon: '💡',
+    status: 'Inscrito',
+    statusColor: 'bg-green-500 text-white',
     startDate: new Date(),
     endDate: new Date(),
     enrolled: true,
   },
   {
     id: 2,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa para startups inovadoras",
-    category: "Tecnologia",
-    icon: "💡",
-    status: "Inscrito",
-    statusColor: "bg-green-500 text-white",
+    title: 'Programa de Aceleração Tech 2024',
+    description: 'Venha participar desse programa para startups inovadoras',
+    category: 'Tecnologia',
+    icon: '💡',
+    status: 'Inscrito',
+    statusColor: 'bg-green-500 text-white',
     startDate: new Date(),
     endDate: new Date(),
     enrolled: true,
   },
   {
     id: 3,
-    title: "Programa de Aceleração Tech 2024",
-    description: "Venha participar desse programa exclusivo",
-    category: "Tecnologia",
-    icon: "🎯",
-    status: "Aberto",
-    statusColor: "bg-[#F4DA02] text-white",
+    title: 'Programa de Aceleração Tech 2024',
+    description: 'Venha participar desse programa exclusivo',
+    category: 'Tecnologia',
+    icon: '🎯',
+    status: 'Aberto',
+    statusColor: 'bg-[#F4DA02] text-white',
     startDate: new Date(),
     endDate: new Date(),
     enrolled: false,
   },
   {
     id: 4,
-    title: "Exemplo",
-    description: "Descrição de exemplo para demonstração",
-    category: "Exemplo",
-    icon: "📋",
-    status: "",
-    statusColor: "bg-gray-400",
+    title: 'Exemplo',
+    description: 'Descrição de exemplo para demonstração',
+    category: 'Exemplo',
+    icon: '📋',
+    status: '',
+    statusColor: 'bg-gray-400',
     startDate: new Date(),
     endDate: new Date(),
     enrolled: false,
   },
 ]
 
-
 export async function HomeSection() {
-
   return (
     <div className="min-h-screen">
       {/* <HomeSideBar role={role} /> */}
       {/* <Header profile={<Profile {...user} />} /> */}
 
       <section className="p-6 space-y-8">
-
-
         <WelcomeBanner />
 
         {/* <div className="grid gap-6  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
@@ -155,7 +143,9 @@ export async function HomeSection() {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold text-gray-900">Editais</h2>
-              <p className="text-gray-600">Editais em que você está inscrito.</p>
+              <p className="text-gray-600">
+                Editais em que você está inscrito.
+              </p>
             </div>
             <Button
               variant="outline"
@@ -165,9 +155,7 @@ export async function HomeSection() {
               Ver Todos
             </Button>
           </div>
-          <Suspense
-            fallback={<Skeleton.EnrollmentOverviewSkeleton />}
-          >
+          <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
             <EnrollmentOverview />
           </Suspense>
         </div>
@@ -175,8 +163,12 @@ export async function HomeSection() {
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gray-900">Mentores em Destaque</h2>
-              <p className="text-gray-600">Conecte-se com especialistas que vão acelerar sua jornada</p>
+              <h2 className="text-3xl font-bold text-gray-900">
+                Mentores em Destaque
+              </h2>
+              <p className="text-gray-600">
+                Conecte-se com especialistas que vão acelerar sua jornada
+              </p>
             </div>
             <Link href="/mentores">
               <Button
@@ -187,7 +179,6 @@ export async function HomeSection() {
                 Ver Todos os Mentores
               </Button>
             </Link>
-
           </div>
 
           <Suspense fallback={<Skeleton.HighlightMentorsSkeleton />}>
@@ -196,8 +187,13 @@ export async function HomeSection() {
 
           <div className="mt-8 p-8 bg-gradient-to-r from-[#5127FF]/10 to-[#F4DA02]/10 rounded-2xl border border-[#5127FF]/20 shadow-sm">
             <div className="text-center space-y-4">
-              <h3 className="text-2xl font-bold text-gray-900">Não encontrou o mentor ideal?</h3>
-              <p className="text-gray-600 text-lg">Temos mais de 50+ mentores especialistas esperando para ajudar você</p>
+              <h3 className="text-2xl font-bold text-gray-900">
+                Não encontrou o mentor ideal?
+              </h3>
+              <p className="text-gray-600 text-lg">
+                Temos mais de 50+ mentores especialistas esperando para ajudar
+                você
+              </p>
 
               <Link href="/mentores">
                 <Button
@@ -207,7 +203,6 @@ export async function HomeSection() {
                   Explorar Todos os Mentores
                 </Button>
               </Link>
-
             </div>
           </div>
         </div>
@@ -216,9 +211,11 @@ export async function HomeSection() {
       <footer className="mt-12 p-6 bg-white border-t">
         <div className="text-center text-sm text-gray-600">
           <p>© 2025 Kadoo - Acelerando startups para transformar vidas</p>
-          <p className="mt-1">Uma iniciativa para democratizar o empreendedorismo</p>
+          <p className="mt-1">
+            Uma iniciativa para democratizar o empreendedorismo
+          </p>
         </div>
       </footer>
     </div>
-  );
+  )
 }

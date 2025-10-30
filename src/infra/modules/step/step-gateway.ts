@@ -49,7 +49,7 @@ export interface CreateActivityStepProps {
   edictId: number
 }
 export interface StepGateway {
-  getByEdictId(edictId: number): Promise<Step[]> 
+  getByEdictId(edictId: number): Promise<Step[]>
   getById(stepId: number): Promise<Step>
   createInPerson(props: CreateStepProps): Promise<void>
   createOnline(props: CreateOnlineStepProps): Promise<void>

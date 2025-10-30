@@ -1,61 +1,61 @@
 'use client'
 
-import { Button } from "@/presentation/external/components/ui/button"
-import { Textarea } from "@/presentation/external/components/ui/textarea"
-import { Input, Label } from "@/presentation/shared/components"
-import { CreateEdictValidation } from "@/validation/protocols/create-edict/edict"
-import { createEdictValidation } from "@/validation/validators/create-edict/create-edict-validation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Checkbox } from "@/presentation/external/components/ui/checkbox"
-import { Separator } from "@/presentation/external/components/ui/separator"
-import { FileText, Calendar, Tag, Loader2, Router } from "lucide-react"
-import { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
-import { toast } from "sonner"
-import remarkGfm from "remark-gfm"
+import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { Calendar, FileText, Loader2, Tag } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { toast } from 'sonner'
+import { edictGatewayHttp } from '@/infra/modules/edict/edict-gateway-http'
+import { Button } from '@/presentation/external/components/ui/button'
 
 import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
-
-import ReactMarkdown from 'react-markdown'
-import { ScrollArea } from "@/presentation/external/components/ui/scroll-area"
-import clsx from "clsx"
-import { Popover, PopoverContent, PopoverTrigger } from "@/presentation/external/components/ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/presentation/external/lib/utils"
-import { ptBR } from "date-fns/locale"
-import { edictGatewayHttp } from "@/infra/modules/edict/edict-gateway-http"
-import { useRouter } from "next/navigation"
-
+import { Checkbox } from '@/presentation/external/components/ui/checkbox'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/presentation/external/components/ui/popover'
+import { ScrollArea } from '@/presentation/external/components/ui/scroll-area'
+import { Separator } from '@/presentation/external/components/ui/separator'
+import { Textarea } from '@/presentation/external/components/ui/textarea'
+import { cn } from '@/presentation/external/lib/utils'
+import { Input, Label } from '@/presentation/shared/components'
+import type { CreateEdictValidation } from '@/validation/protocols/create-edict/edict'
+import { createEdictValidation } from '@/validation/validators/create-edict/create-edict-validation'
 
 const availableCategories = [
-  "Tecnologia",
-  "Impacto Social",
-  "Sustentabilidade",
-  "Saúde",
-  "Educação",
-  "Fintech",
-  "E-commerce",
-  "Agritech",
-  "Foodtech",
-  "Mobilidade",
+  'Tecnologia',
+  'Impacto Social',
+  'Sustentabilidade',
+  'Saúde',
+  'Educação',
+  'Fintech',
+  'E-commerce',
+  'Agritech',
+  'Foodtech',
+  'Mobilidade',
 ]
 
-
-
 export async function uploadFile<T>(file: File): Promise<T> {
-  const formData = new FormData();
-  formData.set("file", file);
+  const formData = new FormData()
+  formData.set('file', file)
 
   const response = await fetch(`/api/upload-file`, {
-    method: "POST",
+    method: 'POST',
     body: formData,
-  });
+  })
 
   if (!response.ok) {
-    throw new Error(`Erro ao enviar`);
+    throw new Error(`Erro ao enviar`)
   }
 
-  const data: T = await response.json();
+  const data: T = await response.json()
   return data
 }
 
@@ -65,100 +65,118 @@ export function Form() {
   const [loading, setLoading] = useState(false)
   const [edictFile, setEdictFile] = useState<File | null>(null)
 
-  const { register, handleSubmit, control, watch, formState: { errors } } = useForm<CreateEdictValidation>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<CreateEdictValidation>({
     resolver: zodResolver(createEdictValidation),
     defaultValues: {
-      categories: []
+      categories: [],
     },
   })
 
   console.log(errors)
 
   async function handleCreateEdictForm(data: CreateEdictValidation) {
-
     setLoading(true)
 
     if (!edictFile) {
-      toast.error("Arquivo do edital é obrigatório.");
-      return;
+      toast.error('Arquivo do edital é obrigatório.')
+      return
     }
 
     try {
-      const { url: edictUrl } = await uploadFile<{ url: string; error: boolean }>(edictFile);
-
+      const { url: edictUrl } = await uploadFile<{
+        url: string
+        error: boolean
+      }>(edictFile)
 
       await edictGatewayHttp.create({
         ...data,
         file: edictUrl,
       })
 
-      toast.success("Edital publicado com sucesso!");
+      toast.success('Edital publicado com sucesso!')
 
-      push("/adm/editais")
+      push('/adm/editais')
     } catch {
-      toast.error("Falha no upload. Verifique os arquivos e tente novamente.");
+      toast.error('Falha no upload. Verifique os arquivos e tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
-
-  const startDate = watch("startDate")
-  const endEdictDate = watch("endDate")
-  const descriptionWatched = watch("description")
+  const startDate = watch('startDate')
+  const endEdictDate = watch('endDate')
+  const descriptionWatched = watch('description')
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit(handleCreateEdictForm)} encType="multipart/form-data">
+    <form
+      className="space-y-8"
+      onSubmit={handleSubmit(handleCreateEdictForm)}
+      encType="multipart/form-data"
+    >
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <FileText className="w-5 h-5 text-[#5127FF]" />
-          <h2 className="text-xl font-semibold text-gray-900">Informações do Edital</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Informações do Edital
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6">
           <Input.Root>
-            <Input.Label htmlFor="title" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="title"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Título do Edital *
-            </Input.Label >
+            </Input.Label>
             <Input.Core
               id="title"
               placeholder="Ex: Programa de Aceleração Tech 2024"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("title")}
+              {...register('title')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="description"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Descrição do Edital *
             </Label>
 
             <div className="flex items-center gap-4 mb-2 text-sm">
-
-              <span
-                role="button"
+              <Button
                 onClick={() => setPreviewMode(false)}
                 className={clsx(
-                  "cursor-pointer transition-all",
-                  !previewMode ? "text-[#5127FF] font-semibold" : "text-gray-400"
+                  'cursor-pointer transition-all',
+                  !previewMode
+                    ? 'text-[#5127FF] font-semibold'
+                    : 'text-gray-400',
                 )}
               >
                 Editar
-              </span>
+              </Button>
 
               <span className="text-gray-300">|</span>
 
-              <span
-                role="button"
+              <Button
                 onClick={() => setPreviewMode(true)}
                 className={clsx(
-                  "cursor-pointer transition-all",
-                  previewMode ? "text-[#5127FF] font-semibold" : "text-gray-400"
+                  'cursor-pointer transition-all',
+                  previewMode
+                    ? 'text-[#5127FF] font-semibold'
+                    : 'text-gray-400',
                 )}
               >
                 Preview
-              </span>
-
+              </Button>
             </div>
 
             {!previewMode ? (
@@ -167,63 +185,73 @@ export function Form() {
                 placeholder="Digite a descrição do edital aqui usando markdown..."
                 rows={12}
                 className="resize-none rounded-md border border-gray-300 focus:border-[#5127FF]"
-                {...register("description")}
+                {...register('description')}
               />
             ) : (
               <ScrollArea className="h-[300px] rounded-md border border-gray-300 p-4 bg-gray-50">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    h1: (props) => <h1 className="text-2xl font-bold" {...props} />,
-                    h2: (props) => <h2 className="text-xl font-semibold" {...props} />,
+                    h1: (props) => (
+                      <h1 className="text-2xl font-bold" {...props} />
+                    ),
+                    h2: (props) => (
+                      <h2 className="text-xl font-semibold" {...props} />
+                    ),
                     p: (props) => <p className="leading-relaxed" {...props} />,
                   }}
                 >
-                  {descriptionWatched || "_Sem conteúdo para pré-visualizar._"}
+                  {descriptionWatched || '_Sem conteúdo para pré-visualizar._'}
                 </ReactMarkdown>
               </ScrollArea>
             )}
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="organizer" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="organizer"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Organizador do Edital
             </Label>
             <Input.Core
               id="organizer"
               placeholder="Escreva quem irá organizar o Edital"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("organizer")}
+              {...register('organizer')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="contact" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="contact"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Email para contato
             </Label>
             <Input.Core
               id="contact"
               placeholder="Email para contato"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("contact")}
+              {...register('contact')}
             />
           </Input.Root>
 
           <Input.Root>
-            <Label htmlFor="contact" className="text-sm font-medium text-gray-700 mb-1 block">
+            <Label
+              htmlFor="contact"
+              className="text-sm font-medium text-gray-700 mb-1 block"
+            >
               Localização do Edital
             </Label>
             <Input.Core
               id="location"
               placeholder="Ex: São Luís, Imperatriz"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register("location")}
+              {...register('location')}
             />
           </Input.Root>
-
         </div>
-
-
       </div>
 
       <Separator className="bg-gray-300" />
@@ -236,21 +264,26 @@ export function Form() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Input.Root>
-            <Input.Label htmlFor="startDate" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="startDate"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Data de Início *
             </Input.Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !startDate && "text-muted-foreground"
-
-                )}>
-                  <span className="text-left w-full">{startDate ? (
-                    format(startDate, "PPP", { locale: ptBR })
-                  ) : (
-                    "Selecione uma data"
-                  )}</span>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'w-[240px] pl-3 text-left font-normal',
+                    !startDate && 'text-muted-foreground',
+                  )}
+                >
+                  <span className="text-left w-full">
+                    {startDate
+                      ? format(startDate, 'PPP', { locale: ptBR })
+                      : 'Selecione uma data'}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -274,20 +307,27 @@ export function Form() {
           </Input.Root>
 
           <Input.Root>
-            <Input.Label htmlFor="endDate" className="text-sm font-medium text-gray-700 mb-2 block">
+            <Input.Label
+              htmlFor="endDate"
+              className="text-sm font-medium text-gray-700 mb-2 block"
+            >
               Data de Fim *
             </Input.Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button disabled={!startDate} variant="outline" className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
-                  !endEdictDate && "text-muted-foreground"
-                )}>
-                  <span className="text-left w-full">{endEdictDate ? (
-                    format(endEdictDate, "PPP", { locale: ptBR })
-                  ) : (
-                    "Selecione uma data"
-                  )}</span>
+                <Button
+                  disabled={!startDate}
+                  variant="outline"
+                  className={cn(
+                    'w-[240px] pl-3 text-left font-normal',
+                    !endEdictDate && 'text-muted-foreground',
+                  )}
+                >
+                  <span className="text-left w-full">
+                    {endEdictDate
+                      ? format(endEdictDate, 'PPP', { locale: ptBR })
+                      : 'Selecione uma data'}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -300,25 +340,21 @@ export function Form() {
                       selected={endEdictDate}
                       onDayBlur={onBlur}
                       onSelect={onChange}
-                      disabled={(date) =>
-                        !startDate || date <= startDate
-                      }
+                      disabled={(date) => !startDate || date <= startDate}
                       locale={ptBR}
                       captionLayout="dropdown"
                     />
                   )}
                 />
-
               </PopoverContent>
             </Popover>
           </Input.Root>
         </div>
 
-        <Input.Root >
+        <Input.Root>
           <Input.Label className="text-sm font-medium text-gray-700 block">
             Arquivo PDF do edital
           </Input.Label>
-
 
           <Input.Core
             type="file"
@@ -333,7 +369,6 @@ export function Form() {
       </div>
 
       <Separator />
-
 
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
@@ -747,7 +782,6 @@ export function Form() {
         </button>
       </div> */}
 
-
       <div className="flex flex-col sm:flex-row gap-4 pt-6">
         <Button
           type="submit"
@@ -755,10 +789,14 @@ export function Form() {
           className="bg-[#F4DA02] text-black hover:bg-[#F4DA02]/90 font-semibold px-8 py-3 h-auto"
         >
           {loading && <Loader2 className="h-5 w-5 animate-spin" />}
-          {loading ? "Publicando..." : "Publicar Edital"}
+          {loading ? 'Publicando...' : 'Publicar Edital'}
         </Button>
 
-        <Button type="reset" variant="ghost" className="text-gray-600 hover:text-gray-800 px-8 py-3 h-auto">
+        <Button
+          type="reset"
+          variant="ghost"
+          className="text-gray-600 hover:text-gray-800 px-8 py-3 h-auto"
+        >
           Cancelar
         </Button>
       </div>

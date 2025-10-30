@@ -1,26 +1,47 @@
 'use client'
 
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/presentation/external/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/presentation/external/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/presentation/external/components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { CalendarIcon, Check, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Controller, useForm } from 'react-hook-form'
+import { Role } from '@/business/domain/role'
+import { registerGatewayHttp } from '@/infra/modules/register/register-gateway-http'
+import { Calendar } from '@/presentation/external/components/ui/calendar'
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/presentation/external/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/presentation/external/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/presentation/external/components/ui/select'
 import { cn } from '@/presentation/external/lib/utils'
 import { Input } from '@/presentation/shared/components/form/input/input'
-import { Check, Loader2 } from 'lucide-react'
-
-import { ptBR } from "date-fns/locale"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from '@/presentation/external/components/ui/calendar'
-import { registerGatewayHttp } from '@/infra/modules/register/register-gateway-http'
-import { Role } from '@/business/domain/role'
-import { useRouter } from 'next/navigation'
 import { APP_ROUTES } from '@/shared/constants/routes'
-import { Controller, useForm } from 'react-hook-form'
-import { RegisterValidation } from '@/validation/protocols/register/register'
-import { zodResolver } from '@hookform/resolvers/zod'
+import type { RegisterValidation } from '@/validation/protocols/register/register'
 import { registerValidation } from '@/validation/validators/register/register-validation'
 
-const AREA_OPTIONS = ["Educação", "Finanças", "Tecnologia", "Saúde", "Marketing", "Vendas"]
+const AREA_OPTIONS = [
+  'Educação',
+  'Finanças',
+  'Tecnologia',
+  'Saúde',
+  'Marketing',
+  'Vendas',
+]
 
 export function Form() {
   const { push } = useRouter()
@@ -31,7 +52,7 @@ export function Form() {
     setValue,
     control,
     formState: { errors, isSubmitting },
-    watch
+    watch,
   } = useForm<RegisterValidation>({
     resolver: zodResolver(registerValidation),
     mode: 'all',
@@ -54,10 +75,9 @@ export function Form() {
   async function handleSubmitRegisterForm(data: RegisterValidation) {
     try {
       await registerGatewayHttp.create({
-
         ...data,
         cpf: data.cpf.replace(/\D/g, ''),
-        area: data.area
+        area: data.area,
       })
 
       push(APP_ROUTES.login)
@@ -67,36 +87,76 @@ export function Form() {
   }
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitRegisterForm)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(handleSubmitRegisterForm)}
+      className="space-y-6"
+    >
       <div className="space-y-4">
         <Input.Root>
           <Input.Label htmlFor="name">Nome completo</Input.Label>
-          <Input.Core id="name" placeholder="Digite seu nome completo" {...register('name')} />
-          {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+          <Input.Core
+            id="name"
+            placeholder="Digite seu nome completo"
+            {...register('name')}
+          />
+          {errors.name && (
+            <p className="text-sm text-red-600">{errors.name.message}</p>
+          )}
         </Input.Root>
 
         <Input.Root>
           <Input.Label htmlFor="email">E-mail</Input.Label>
-          <Input.Core id="email" type="email" placeholder="Digite seu e-mail" {...register('email')} />
-          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+          <Input.Core
+            id="email"
+            type="email"
+            placeholder="Digite seu e-mail"
+            {...register('email')}
+          />
+          {errors.email && (
+            <p className="text-sm text-red-600">{errors.email.message}</p>
+          )}
         </Input.Root>
 
         <Input.Root>
           <Input.Label htmlFor="password">Senha</Input.Label>
-          <Input.Core id="password" type="password" placeholder="Crie uma senha" {...register('password')} />
-          {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+          <Input.Core
+            id="password"
+            type="password"
+            placeholder="Crie uma senha"
+            {...register('password')}
+          />
+          {errors.password && (
+            <p className="text-sm text-red-600">{errors.password.message}</p>
+          )}
         </Input.Root>
 
         <Input.Root>
           <Input.Label htmlFor="confirmPassword">Confirmar senha</Input.Label>
-          <Input.Core id="confirmPassword" type="password" placeholder="Confirme sua senha" {...register('confirmPassword')} />
-          {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>}
+          <Input.Core
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirme sua senha"
+            {...register('confirmPassword')}
+          />
+          {errors.confirmPassword && (
+            <p className="text-sm text-red-600">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </Input.Root>
 
         <Input.Root>
           <Input.Label htmlFor="cpf">CPF</Input.Label>
-          <Input.Core id="cpf" placeholder="000.000.000-00" maxLength={14} {...register('cpf')} onChange={handleCPFChange} />
-          {errors.cpf && <p className="text-sm text-red-600">{errors.cpf.message}</p>}
+          <Input.Core
+            id="cpf"
+            placeholder="000.000.000-00"
+            maxLength={14}
+            {...register('cpf')}
+            onChange={handleCPFChange}
+          />
+          {errors.cpf && (
+            <p className="text-sm text-red-600">{errors.cpf.message}</p>
+          )}
         </Input.Root>
 
         <Input.Root>
@@ -104,7 +164,8 @@ export function Form() {
           <Select
             onValueChange={(value) =>
               setValue('role', value as Role, { shouldValidate: true })
-            }>
+            }
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecione seu tipo" />
             </SelectTrigger>
@@ -116,37 +177,41 @@ export function Form() {
         </Input.Root>
 
         {watchRole === 'student' && (
-          <>
-            <Input.Root>
-              <Input.Label htmlFor="birthDate">Data de nascimento</Input.Label>
-              <Controller
-                control={control}
-                name="birthDate"
-                render={({ field }) => (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="w-full text-left font-normal border border-gray-300 px-3 py-2 rounded-md text-sm flex items-center justify-between"
-                      >
-                        {field.value ? format(field.value, "dd/MM/yyyy") : <span className="text-gray-400">Selecione a data</span>}
-                        <CalendarIcon className="ml-2 h-4 w-4 text-muted-foreground" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => field.onChange(date ?? undefined)}
-                        locale={ptBR}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                )}
-              />
-              {errors.birthDate && <p className="text-sm text-red-600">{errors.birthDate.message}</p>}
-            </Input.Root>
-          </>
+          <Input.Root>
+            <Input.Label htmlFor="birthDate">Data de nascimento</Input.Label>
+            <Controller
+              control={control}
+              name="birthDate"
+              render={({ field }) => (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full text-left font-normal border border-gray-300 px-3 py-2 rounded-md text-sm flex items-center justify-between"
+                    >
+                      {field.value ? (
+                        format(field.value, 'dd/MM/yyyy')
+                      ) : (
+                        <span className="text-gray-400">Selecione a data</span>
+                      )}
+                      <CalendarIcon className="ml-2 h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-white" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date) => field.onChange(date ?? undefined)}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {errors.birthDate && (
+              <p className="text-sm text-red-600">{errors.birthDate.message}</p>
+            )}
+          </Input.Root>
         )}
 
         {watchRole === 'mentor' && (
@@ -164,19 +229,24 @@ export function Form() {
                       <button
                         type="button"
                         className={cn(
-                          "w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-md text-sm text-left",
-                          "flex flex-wrap items-start gap-1",
-                          "hover:border-[#5f2eea] focus:outline-none focus:ring-2 focus:ring-[#5f2eea]",
-                          value.length === 0 && "text-gray-400"
+                          'w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-md text-sm text-left',
+                          'flex flex-wrap items-start gap-1',
+                          'hover:border-[#5f2eea] focus:outline-none focus:ring-2 focus:ring-[#5f2eea]',
+                          value.length === 0 && 'text-gray-400',
                         )}
                       >
-                        {value.length > 0 ? value.join(', ') : "Selecione até 3 áreas"}
+                        {value.length > 0
+                          ? value.join(', ')
+                          : 'Selecione até 3 áreas'}
                       </button>
                     </PopoverTrigger>
 
                     <PopoverContent className="w-full p-0 bg-white shadow-md rounded-md z-50">
                       <Command>
-                        <CommandInput placeholder="Buscar área..." className="border-b" />
+                        <CommandInput
+                          placeholder="Buscar área..."
+                          className="border-b"
+                        />
                         <CommandEmpty>Nenhuma área encontrada.</CommandEmpty>
                         <CommandList>
                           {AREA_OPTIONS.map((area) => {
@@ -186,7 +256,9 @@ export function Form() {
                                 key={area}
                                 onSelect={() => {
                                   if (isSelected) {
-                                    field.onChange(value.filter((a) => a !== area))
+                                    field.onChange(
+                                      value.filter((a) => a !== area),
+                                    )
                                   } else if (value.length < 3) {
                                     field.onChange([...value, area])
                                   }
@@ -194,7 +266,9 @@ export function Form() {
                                 className="flex justify-between border-none"
                               >
                                 {area}
-                                {isSelected && <Check className="w-4 h-4 text-primary" />}
+                                {isSelected && (
+                                  <Check className="w-4 h-4 text-primary" />
+                                )}
                               </CommandItem>
                             )
                           })}
@@ -205,14 +279,17 @@ export function Form() {
                 )
               }}
             />
-            {Array.isArray(watchExpertiseArea) && watchExpertiseArea.length >= 3 && (
-              <p className="text-xs text-red-500 mt-2">Máximo de 3 áreas selecionadas.</p>
-            )}
+            {Array.isArray(watchExpertiseArea) &&
+              watchExpertiseArea.length >= 3 && (
+                <p className="text-xs text-red-500 mt-2">
+                  Máximo de 3 áreas selecionadas.
+                </p>
+              )}
           </Input.Root>
         )}
       </div>
 
-      <div className='w-full'>
+      <div className="w-full">
         <button
           type="submit"
           disabled={isSubmitting}

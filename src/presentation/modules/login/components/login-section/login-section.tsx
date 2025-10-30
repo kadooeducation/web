@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { Form } from "../form/form";
+import Image from 'next/image'
+import { Form } from '../form/form'
 
 export function LoginSection() {
   return (

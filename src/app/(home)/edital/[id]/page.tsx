@@ -1,12 +1,13 @@
-import { EdictDetailsSection } from "@/presentation/modules/edict/view/components/edict-details/edict-details"
-import { notFound } from "next/navigation"
-import { Metadata } from "next"
-import { kyClient } from "@/infra/external/http/ky-client/api"
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { kyClient } from '@/infra/external/http/ky-client/api'
+import { EdictDetailsSection } from '@/presentation/modules/edict/view/components/edict-details/edict-details'
 
-export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> }
-): Promise<Metadata> {
-
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
   const { id } = await params
 
   const edict = await kyClient.get<{
@@ -25,7 +26,7 @@ export async function generateMetadata(
 
   if (!edict) {
     return {
-      title: "Edital não encontrado - Kadoo Academy",
+      title: 'Edital não encontrado - Kadoo Academy',
     }
   }
 
@@ -56,10 +57,7 @@ export default async function EdictDetailsPage({
     categories: string[]
   }>(`edict/${id}`)
 
-
   if (!edict) return notFound()
 
-  return (
-    <EdictDetailsSection edict={edict} />
-  )
+  return <EdictDetailsSection edict={edict} />
 }

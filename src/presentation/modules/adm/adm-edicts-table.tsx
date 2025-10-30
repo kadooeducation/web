@@ -1,22 +1,40 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { Button } from "@/presentation/external/components/ui/button"
-import { Input } from "@/presentation/external/components/ui/input"
-import { Card } from "@/presentation/external/components/ui/card"
+import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/presentation/external/components/ui/button'
+import { Card } from '@/presentation/external/components/ui/card'
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from "@/presentation/external/components/ui/select"
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/presentation/external/components/ui/dialog'
+import { Input } from '@/presentation/external/components/ui/input'
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@/presentation/external/components/ui/table"
-import { Pencil, Trash2, Plus, Search } from "lucide-react"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/presentation/external/components/ui/dialog"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/presentation/external/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/presentation/external/components/ui/table'
 
 export const statusColorMap: Record<string, string> = {
-  "Aberto": "bg-green-100 text-green-700",
-  "Encerrado": "bg-red-100 text-red-700",
-  "Em breve": "bg-yellow-100 text-yellow-700",
+  Aberto: 'bg-green-100 text-green-700',
+  Encerrado: 'bg-red-100 text-red-700',
+  'Em breve': 'bg-yellow-100 text-yellow-700',
 }
 
 interface AdmEdictsTableProps {
@@ -31,10 +49,8 @@ interface AdmEdictsTableProps {
   }[]
 }
 
-
 export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
-
-  function handleDelete(id: number) {
+  function handleDelete(_id: number) {
     // if (confirm("Deseja excluir este edital?")) {
     //   setItems(prev => prev.filter(e => e.id !== id))
     // }
@@ -42,12 +58,13 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
 
   return (
     <Dialog>
-
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Gerenciamento de Editais</h1>
-            <p className="text-gray-600">Busque, filtre e gerencie os editais</p>
+            <p className="text-gray-600">
+              Busque, filtre e gerencie os editais
+            </p>
           </div>
           <Button asChild className="bg-[#5127FF] hover:bg-[#5127FF]/90">
             <Link href="/adm/criar-edital" className="text-white">
@@ -100,12 +117,18 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                 <TableRow key={e.id} className="hover:bg-gray-50">
                   <TableCell className="font-medium">{e.title}</TableCell>
                   <TableCell>
-                    <span className="text-sm text-gray-700">{new Date(e.startDate).toLocaleDateString()}</span>
+                    <span className="text-sm text-gray-700">
+                      {new Date(e.startDate).toLocaleDateString()}
+                    </span>
                     <span className="mx-1 text-gray-400">até</span>
-                    <span className="text-sm text-gray-700">{new Date(e.endDate).toLocaleDateString()}</span>
+                    <span className="text-sm text-gray-700">
+                      {new Date(e.endDate).toLocaleDateString()}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColorMap[e.status]}`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColorMap[e.status]}`}
+                    >
                       {e.status}
                     </span>
                   </TableCell>
@@ -122,7 +145,11 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                         </Link>
                       </Button>
                       <DialogTrigger asChild>
-                        <Button variant="destructive" size="sm" className="bg-red-500">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="bg-red-500"
+                        >
                           <Trash2 className="w-4 h-4 mr-1" /> Excluir
                         </Button>
                       </DialogTrigger>
@@ -131,7 +158,8 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                         <DialogHeader>
                           <DialogTitle>Deletar edital</DialogTitle>
                           <DialogDescription>
-                            Tem certeza que deseja deletar este edital? Essa ação não pode ser desfeita.
+                            Tem certeza que deseja deletar este edital? Essa
+                            ação não pode ser desfeita.
                           </DialogDescription>
                         </DialogHeader>
 
@@ -186,6 +214,5 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
         </div> */}
       </div>
     </Dialog>
-
   )
 }

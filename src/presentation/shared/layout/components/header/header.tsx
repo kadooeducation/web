@@ -1,7 +1,5 @@
-import { SidebarTrigger } from "@/presentation/external/components/ui/sidebar";
-
-import { ReactNode } from "react";
-
+import type { ReactNode } from 'react'
+import { SidebarTrigger } from '@/presentation/external/components/ui/sidebar'
 
 interface HeaderProps {
   profile: ReactNode
@@ -17,9 +15,7 @@ export function Header({ profile }: HeaderProps) {
           <p className="text-gray-600">Bem-vindo de volta, Pedro!</p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
-        {profile}
-      </div>
+      <div className="flex items-center gap-4">{profile}</div>
     </header>
   )
 }

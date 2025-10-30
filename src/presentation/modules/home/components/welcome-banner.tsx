@@ -1,6 +1,4 @@
-import { Card, CardContent } from "@/presentation/external/components/ui/card";
-import WelcomeBannerSvg from "@/assets/main-banner.svg";
-import Image from "next/image";
+import Image from 'next/image'
 
 export function WelcomeBanner() {
   return (
@@ -24,5 +22,5 @@ export function WelcomeBanner() {
     //     </div>
     //   </CardContent>
     // </Card>
-  );
+  )
 }

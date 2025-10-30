@@ -1,5 +1,16 @@
 'use client'
-import { loginGatewayHttp } from "@/infra/modules/login/login-gateway-http"
+
+import {
+  BarChart3,
+  FileText,
+  Home,
+  LogOut,
+  UserRoundCog,
+  UsersIcon,
+} from 'lucide-react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { loginGatewayHttp } from '@/infra/modules/login/login-gateway-http'
 import {
   Sidebar,
   SidebarContent,
@@ -10,30 +21,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/presentation/external/components/ui/sidebar"
-import { APP_ROUTES } from "@/shared/constants/routes"
+} from '@/presentation/external/components/ui/sidebar'
+import { APP_ROUTES } from '@/shared/constants/routes'
+import { EnumProfile } from './profile/profile'
 
-import { Home, FileText, UsersIcon, BarChart3, LogOut, UserRoundCog } from "lucide-react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { EnumProfile } from "./profile/profile"
 interface HomeSideBarProps {
   role: EnumProfile
 }
 
 export function HomeSideBar({ role }: HomeSideBarProps) {
-
   const { push } = useRouter()
 
   const allMenuItems = [
-    { title: "Home", icon: Home, url: APP_ROUTES.home },
-    { title: "Meus editais", icon: FileText, url: "/meus-editais" },
-    { title: "Mentores", icon: UsersIcon, url: "/mentores" },
-    { title: "Meu progresso", icon: BarChart3, url: "#" },
-    { title: "Área do Administrador", icon: UserRoundCog, url: "/adm", onAdmin: true }
+    { title: 'Home', icon: Home, url: APP_ROUTES.home },
+    { title: 'Meus editais', icon: FileText, url: '/meus-editais' },
+    { title: 'Mentores', icon: UsersIcon, url: '/mentores' },
+    { title: 'Meu progresso', icon: BarChart3, url: '#' },
+    {
+      title: 'Área do Administrador',
+      icon: UserRoundCog,
+      url: '/adm',
+      onAdmin: true,
+    },
   ]
 
-  const menuItems = allMenuItems.filter(item => {
+  const menuItems = allMenuItems.filter((item) => {
     if (!item.onAdmin) return true
     return role === EnumProfile.ROLE_ADMIN
   })
@@ -46,7 +58,12 @@ export function HomeSideBar({ role }: HomeSideBarProps) {
     <Sidebar className="border-r-1 border-[#000]/10">
       <SidebarHeader className="p-6">
         <div className="flex justify-start items-center gap-2">
-          <Image src="/icons/logo.svg" width={150} height={60} alt="Logo da Kadoo" />
+          <Image
+            src="/icons/logo.svg"
+            width={150}
+            height={60}
+            alt="Logo da Kadoo"
+          />
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -73,7 +90,10 @@ export function HomeSideBar({ role }: HomeSideBarProps) {
       <SidebarFooter className="p-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="hover:bg-red-50 hover:text-red-600" onClick={handleLogOut}>
+            <SidebarMenuButton
+              className="hover:bg-red-50 hover:text-red-600"
+              onClick={handleLogOut}
+            >
               <LogOut className="w-5 h-5" />
               <span>Sair</span>
             </SidebarMenuButton>

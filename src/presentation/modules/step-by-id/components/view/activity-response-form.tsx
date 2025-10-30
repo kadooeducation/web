@@ -1,21 +1,29 @@
 'use client'
 
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-
-import { Button } from "@/presentation/external/components/ui/button"
-import { Textarea } from "@/presentation/external/components/ui/textarea"
-import { Input } from "@/presentation/shared/components"
-import { useState } from "react"
-import { uploadFile } from "@/presentation/modules/edict/create/components/form/form"
-import { activityResponseGatewayHttp } from "@/infra/modules/activity-response/activity-response-gateway-http"
-import { toast } from "sonner"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/presentation/external/components/ui/dialog"
-import { useRouter } from "next/navigation"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { activityResponseGatewayHttp } from '@/infra/modules/activity-response/activity-response-gateway-http'
+import { Button } from '@/presentation/external/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/presentation/external/components/ui/dialog'
+import { Textarea } from '@/presentation/external/components/ui/textarea'
+import { uploadFile } from '@/presentation/modules/edict/create/components/form/form'
+import { Input } from '@/presentation/shared/components'
 
 const schema = z.object({
-  answer: z.string().min(1, "Informe sua resposta."),
+  answer: z.string().min(1, 'Informe sua resposta.'),
 })
 
 type FormData = z.infer<typeof schema>
@@ -25,44 +33,53 @@ interface ActivityResponseFormProps {
 }
 
 export function ActivityResponseForm({ stepId }: ActivityResponseFormProps) {
-
   const { replace } = useRouter()
 
   const [pdf, setPdf] = useState<File | null>(null)
 
-  const { register, handleSubmit, reset, formState: {
-    isValid
-  } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { answer: "" },
-    mode: 'onChange'
+    defaultValues: { answer: '' },
+    mode: 'onChange',
   })
 
   const onSubmit = async (data: FormData) => {
-
-    let pdfUrl
+    let pdfUrl = ''
 
     if (pdf) {
-      const { url } = await uploadFile<{ url: string; error: boolean }>(pdf);
+      const { url } = await uploadFile<{ url: string; error: boolean }>(pdf)
       pdfUrl = url
     }
 
-    await activityResponseGatewayHttp.create({
-      pdf: pdfUrl ?? "",
-      response: data.answer,
-      stepId,
-    }).then(() => {
-      toast.success("Atividade enviada com sucesso!")
-      replace(`/etapa/${stepId}`)
-    }).catch((err) => {
-      toast.error("Erro ao enviar atividade")
-    })
+    await activityResponseGatewayHttp
+      .create({
+        pdf: pdfUrl ?? '',
+        response: data.answer,
+        stepId,
+      })
+      .then(() => {
+        toast.success('Atividade enviada com sucesso!')
+        replace(`/etapa/${stepId}`)
+      })
+      .catch((_err) => {
+        toast.error('Erro ao enviar atividade')
+      })
   }
 
-  const formId = "activity-response-form"
+  const formId = 'activity-response-form'
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} noValidate encType="multipart/form-data">
+    <form
+      id={formId}
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      encType="multipart/form-data"
+    >
       <div className="space-y-2">
         <label htmlFor="answer" className="text-sm font-medium text-slate-700">
           Resposta / Observações
@@ -71,7 +88,7 @@ export function ActivityResponseForm({ stepId }: ActivityResponseFormProps) {
           id="answer"
           placeholder="Descreva sua solução, links de protótipos ou anotações importantes…"
           className="min-h-32 resize-y"
-          {...register("answer")}
+          {...register('answer')}
         />
         <p className="text-xs text-slate-500">
           Dica: seja objetivo e inclua referências (links) se necessário.
@@ -109,15 +126,21 @@ export function ActivityResponseForm({ stepId }: ActivityResponseFormProps) {
         <Dialog>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-[#5127FF]">Confirmar envio</DialogTitle>
+              <DialogTitle className="text-[#5127FF]">
+                Confirmar envio
+              </DialogTitle>
               <DialogDescription className="text-slate-600">
-                após enviar, <span className="font-medium">não será possível editar a resposta</span>. deseja continuar?
+                após enviar,{' '}
+                <span className="font-medium">
+                  não será possível editar a resposta
+                </span>
+                . deseja continuar?
               </DialogDescription>
             </DialogHeader>
 
             <DialogFooter className="gap-2">
               <DialogClose asChild>
-                <Button variant="outline" className="border-slate-300" >
+                <Button variant="outline" className="border-slate-300">
                   Cancelar
                 </Button>
               </DialogClose>

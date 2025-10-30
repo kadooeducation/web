@@ -1,13 +1,12 @@
-import { kyClient } from "@/infra/external/http/ky-client/api";
-import { EditEdictSection } from "@/presentation/modules/edict/edit/components/edit-edict-section/edit-edict-section";
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation'
+import { kyClient } from '@/infra/external/http/ky-client/api'
+import { EditEdictSection } from '@/presentation/modules/edict/edit/components/edit-edict-section/edit-edict-section'
 
 export default async function EditEdictPage({
   params,
 }: {
   params: Promise<{ id: number }>
 }) {
-
   const { id } = await params
 
   const edict = await kyClient.get<{
@@ -26,7 +25,5 @@ export default async function EditEdictPage({
 
   if (!edict) return notFound()
 
-  return (
-    <EditEdictSection edict={edict} />
-  )
+  return <EditEdictSection edict={edict} />
 }

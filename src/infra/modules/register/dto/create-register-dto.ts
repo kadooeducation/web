@@ -1,4 +1,4 @@
-import { Role } from "@/business/domain/role"
+import type { Role } from '@/business/domain/role'
 
 export interface CreateRegisterDTO {
   name: string

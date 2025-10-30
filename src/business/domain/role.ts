@@ -1,8 +1,8 @@
 export enum Role {
   STUDENT = 'student',
-  MENTOR = 'mentor'
+  MENTOR = 'mentor',
 }
 
 export enum RoleEnum {
-  ROLE_ADMIN
+  ROLE_ADMIN,
 }

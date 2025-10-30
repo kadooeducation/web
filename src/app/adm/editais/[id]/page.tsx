@@ -1,23 +1,32 @@
-import { Button } from "@/presentation/external/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
-import { Separator } from "@/presentation/external/components/ui/separator"
+/** biome-ignore-all lint/suspicious/noExplicitAny: tipagem estática  */
 
-import { Footprints, PlusCircle } from "lucide-react"
-import { notFound } from "next/navigation"
-import { CreateInPersonEventDialog } from "@/presentation/modules/step-by-id/components/create/create-in-person-event-dialog"
-import { CreateOnlineEventDialog } from "@/presentation/modules/step-by-id/components/create/create-online-event-dialog"
-import { CreateActivityDialog } from "@/presentation/modules/step-by-id/components/create/create-activity-dialog"
-import { createInPersonStepAction } from "./(actions)/create-in-person-step-action"
-import { EventStepCard } from "@/presentation/modules/step-by-id/components/view/event-step-card"
-import { Fragment } from "react"
-import { ActivityStepCard } from "@/presentation/modules/step-by-id/components/view/activity-step-card"
-import { kyClient } from "@/infra/external/http/ky-client/api"
-import type { Step } from "@/infra/modules/step/step-gateway"
+import { Footprints, PlusCircle } from 'lucide-react'
+import { notFound } from 'next/navigation'
+import { Fragment } from 'react'
+import { kyClient } from '@/infra/external/http/ky-client/api'
+import type { Step } from '@/infra/modules/step/step-gateway'
+import { Button } from '@/presentation/external/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/presentation/external/components/ui/card'
+import { Separator } from '@/presentation/external/components/ui/separator'
+import { CreateActivityDialog } from '@/presentation/modules/step-by-id/components/create/create-activity-dialog'
+import { CreateInPersonEventDialog } from '@/presentation/modules/step-by-id/components/create/create-in-person-event-dialog'
+import { CreateOnlineEventDialog } from '@/presentation/modules/step-by-id/components/create/create-online-event-dialog'
+import { ActivityStepCard } from '@/presentation/modules/step-by-id/components/view/activity-step-card'
+import { EventStepCard } from '@/presentation/modules/step-by-id/components/view/event-step-card'
+import { createInPersonStepAction } from './(actions)/create-in-person-step-action'
 
 export const dynamic = 'force-dynamic'
 
-export default async function EdictByIdPage({ params }: { params: Promise<{ id: number }> }) {
-
+export default async function EdictByIdPage({
+  params,
+}: {
+  params: Promise<{ id: number }>
+}) {
   const { id } = await params
 
   const edict = await kyClient.get<{
@@ -38,16 +47,20 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
 
   if (!edict) notFound()
 
-    console.log(steps)
+  console.log(steps)
 
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Detalhes do Edital</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Detalhes do Edital
+            </h1>
             <div className="mt-1 flex items-center gap-2">
-              <span className="text-md text-gray-950 font-semibold">Edital: {edict?.title}</span>
+              <span className="text-md text-gray-950 font-semibold">
+                Edital: {edict?.title}
+              </span>
             </div>
           </div>
 
@@ -71,7 +84,10 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
-              <CreateInPersonEventDialog edictId={Number(id)} onCreateStepAction={createInPersonStepAction}>
+              <CreateInPersonEventDialog
+                edictId={Number(id)}
+                onCreateStepAction={createInPersonStepAction}
+              >
                 <Button className="bg-[#5127FF] hover:bg-[#5127FF]/90">
                   <PlusCircle className="mr-2 h-5 w-5" />
                   Evento Presencial
@@ -97,11 +113,9 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
               {steps.length > 0 ? (
                 steps?.map((step: any) => (
                   <Fragment key={step.id}>
-                    {step?.kind === "event" && (
-                      <EventStepCard step={step} />
-                    )}
+                    {step?.kind === 'event' && <EventStepCard step={step} />}
 
-                    {step?.kind === "activity" && (
+                    {step?.kind === 'activity' && (
                       <ActivityStepCard step={step} />
                     )}
                     {/* <StepCard step={step} key={step.id} /> */}
@@ -111,7 +125,9 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
                 <div className="mt-4 col-span-2 w-full">
                   <div className="text-center text-sm text-gray-600 p-6 border border-dashed rounded-lg">
                     Nenhuma etapa adicionada ainda.
-                    <div className="mt-2">Use os botões acima para criar Evento ou Atividade.</div>
+                    <div className="mt-2">
+                      Use os botões acima para criar Evento ou Atividade.
+                    </div>
                   </div>
                 </div>
               )}
@@ -122,5 +138,3 @@ export default async function EdictByIdPage({ params }: { params: Promise<{ id: 
     </div>
   )
 }
-
-

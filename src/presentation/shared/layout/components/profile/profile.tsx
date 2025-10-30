@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/external/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/presentation/external/components/ui/avatar'
 
 interface ProfileProps {
   name: string
@@ -6,28 +10,29 @@ interface ProfileProps {
 }
 
 export enum EnumProfile {
-  ROLE_STUDENT = "STUDENT",
-  ROLE_MENTOR = "MENTOR",
-  ROLE_ENTERPRISE = "ENTERPRISE",
-  ROLE_ADMIN = "ADMIN"
+  ROLE_STUDENT = 'STUDENT',
+  ROLE_MENTOR = 'MENTOR',
+  ROLE_ENTERPRISE = 'ENTERPRISE',
+  ROLE_ADMIN = 'ADMIN',
 }
 
 export function Profile({ name, role }: ProfileProps) {
-
   const ROLE_USER = {
-    [EnumProfile.ROLE_STUDENT]: "Estudante",
-    [EnumProfile.ROLE_MENTOR]: "Mentor",
-    [EnumProfile.ROLE_ENTERPRISE]: "Empresa",
-    [EnumProfile.ROLE_ADMIN]: "Administrador"
+    [EnumProfile.ROLE_STUDENT]: 'Estudante',
+    [EnumProfile.ROLE_MENTOR]: 'Mentor',
+    [EnumProfile.ROLE_ENTERPRISE]: 'Empresa',
+    [EnumProfile.ROLE_ADMIN]: 'Administrador',
   }
 
-  const firstLetter = name?.charAt(0).toUpperCase();
+  const firstLetter = name?.charAt(0).toUpperCase()
 
   return (
     <div className="flex items-center gap-4">
       <Avatar>
         <AvatarImage src="/placeholder.svg?height=40&width=40" />
-        <AvatarFallback className="bg-[#5127FF] text-white">{firstLetter}</AvatarFallback>
+        <AvatarFallback className="bg-[#5127FF] text-white">
+          {firstLetter}
+        </AvatarFallback>
       </Avatar>
       <div className="hidden md:block">
         <p className="font-medium text-gray-900">{name}</p>

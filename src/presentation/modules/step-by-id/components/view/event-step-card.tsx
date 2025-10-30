@@ -1,59 +1,82 @@
-"use client"
+/** biome-ignore-all lint/suspicious/noExplicitAny: usado em tipagem externa sem controle */
+'use client'
 
-import { deleteEventAction } from "@/app/adm/editais/[id]/(actions)/delete-event-action"
-
-import { Button } from "@/presentation/external/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/external/components/ui/card"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/presentation/external/components/ui/dialog"
-import { Separator } from "@/presentation/external/components/ui/separator"
-
-import { Calendar as CalIcon, Link2, MapPin, Loader2, Footprints } from "lucide-react"
-import { useState, useTransition } from "react"
-import { toast } from "sonner"
-
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Label } from "@/presentation/shared/components"
-import { Input } from "@/presentation/external/components/ui/input"
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Calendar as CalIcon,
+  Footprints,
+  Link2,
+  Loader2,
+  MapPin,
+} from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { deleteEventAction } from '@/app/adm/editais/[id]/(actions)/delete-event-action'
+import { Button } from '@/presentation/external/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/presentation/external/components/ui/card'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/presentation/external/components/ui/dialog'
+import { Input } from '@/presentation/external/components/ui/input'
+import { Separator } from '@/presentation/external/components/ui/separator'
+import { Label } from '@/presentation/shared/components'
 
 const fmtDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString("pt-BR") : "-"
+  iso ? new Date(iso).toLocaleDateString('pt-BR') : '-'
 
 const fmtMode = (s?: string | null) =>
-  s ? s.toString().toLowerCase().replace(/^\w/, c => c.toUpperCase()) : "-"
+  s
+    ? s
+        .toString()
+        .toLowerCase()
+        .replace(/^\w/, (c) => c.toUpperCase())
+    : '-'
 
 const stepPill = (step: any) => {
-  if (step.kind === "event") {
-    const isOnline = step.event?.type === "online"
+  if (step.kind === 'event') {
+    const isOnline = step.event?.type === 'online'
     return {
       icon: isOnline ? Link2 : MapPin,
-      text: `Evento ${isOnline ? "Online" : "Presencial"}`
+      text: `Evento ${isOnline ? 'Online' : 'Presencial'}`,
     }
   }
-  return { icon: Footprints, text: "Atividade" }
+  return { icon: Footprints, text: 'Atividade' }
 }
 
 function isoToDateInput(iso?: string) {
-  if (!iso) return ""
+  if (!iso) return ''
   const d = new Date(iso)
   const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, "0")
-  const dd = String(d.getDate()).padStart(2, "0")
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
   return `${yyyy}-${mm}-${dd}`
 }
 
 const baseSchema = z.object({
-  title: z.string().min(1, "Informe o título."),
+  title: z.string().min(1, 'Informe o título.'),
   date: z.string().optional(),
 })
 
 const onlineSchema = baseSchema.extend({
-  meetingLink: z.url("Link inválido").min(1, "Informe o link da reunião."),
+  meetingLink: z.url('Link inválido').min(1, 'Informe o link da reunião.'),
 })
 
 const inPersonSchema = baseSchema.extend({
-  address: z.string().min(1, "Informe o endereço."),
+  address: z.string().min(1, 'Informe o endereço.'),
 })
 
 export function EventStepCard({ step }: any) {
@@ -63,33 +86,37 @@ export function EventStepCard({ step }: any) {
   const pill = stepPill(step)
   const PillIcon = pill.icon
 
-  const isOnline = step.event?.type === "online"
+  const isOnline = step.event?.type === 'online'
   const schema = isOnline ? onlineSchema : inPersonSchema
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schema),
     defaultValues: isOnline
       ? {
-        title: step?.title ?? "",
-        date: isoToDateInput(step.date),
-        meetingLink: step.event?.meetingLink ?? "",
-      }
+          title: step?.title ?? '',
+          date: isoToDateInput(step.date),
+          meetingLink: step.event?.meetingLink ?? '',
+        }
       : {
-        title: step.title ?? "",
-        date: isoToDateInput(step.date),
-        address: step.event?.address ?? "",
-      }
+          title: step.title ?? '',
+          date: isoToDateInput(step.date),
+          address: step.event?.address ?? '',
+        },
   })
 
   function handleDeleteEvent() {
     startTransition(async () => {
       await deleteEventAction(step.id)
       toast.success(`Etapa ${step.title} deletada com sucesso!`)
-      if (typeof window !== "undefined") window.location.reload()
+      if (typeof window !== 'undefined') window.location.reload()
     })
   }
 
-  function onSubmit(values: any) {
+  function onSubmit(_values: any) {
     startTransition(async () => {
       try {
         if (isOnline) {
@@ -105,12 +132,12 @@ export function EventStepCard({ step }: any) {
           //   address: values.address,
           // })
         }
-        toast.success("Evento atualizado com sucesso!")
+        toast.success('Evento atualizado com sucesso!')
         setOpenEdit(false)
-        if (typeof window !== "undefined") window.location.reload()
+        if (typeof window !== 'undefined') window.location.reload()
       } catch (err) {
         console.error(err)
-        toast.error("Erro ao atualizar o evento.")
+        toast.error('Erro ao atualizar o evento.')
       }
     })
   }
@@ -136,7 +163,8 @@ export function EventStepCard({ step }: any) {
               <DialogHeader>
                 <DialogTitle>Deletar etapa</DialogTitle>
                 <DialogDescription>
-                  Tem certeza que deseja deletar esta etapa? Essa ação não pode ser desfeita.
+                  Tem certeza que deseja deletar esta etapa? Essa ação não pode
+                  ser desfeita.
                 </DialogDescription>
               </DialogHeader>
 
@@ -156,13 +184,15 @@ export function EventStepCard({ step }: any) {
                       Deletando etapa...
                     </>
                   ) : (
-                    "Deletar"
+                    'Deletar'
                   )}
                 </Button>
               </DialogFooter>
             </DialogContent>
             <DialogTrigger asChild>
-              <Button size="sm" variant="destructive">Deletar</Button>
+              <Button size="sm" variant="destructive">
+                Deletar
+              </Button>
             </DialogTrigger>
           </Dialog>
         </div>
@@ -174,7 +204,7 @@ export function EventStepCard({ step }: any) {
           <span>Data: {fmtDate(step.date)}</span>
         </div>
 
-        {step.kind === "event" && (
+        {step.kind === 'event' && (
           <>
             {step.event?.meetingLink && (
               <div className="flex items-center gap-2">
@@ -217,26 +247,46 @@ export function EventStepCard({ step }: any) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Título</Label>
-              <Input id="title" placeholder="Título do evento" {...register("title")} />
-              {errors.title && <p className="text-xs text-red-600">{String(errors.title.message)}</p>}
+              <Input
+                id="title"
+                placeholder="Título do evento"
+                {...register('title')}
+              />
+              {errors.title && (
+                <p className="text-xs text-red-600">
+                  {String(errors.title.message)}
+                </p>
+              )}
             </div>
 
             <div className="grid gap-2">
               <Label htmlFor="date">Data </Label>
-              <Input id="date" type="date" {...register("date")} />
-              {errors.date && <p className="text-xs text-red-600">{String(errors.date.message)}</p>}
+              <Input id="date" type="date" {...register('date')} />
+              {errors.date && (
+                <p className="text-xs text-red-600">
+                  {String(errors.date.message)}
+                </p>
+              )}
             </div>
 
             {isOnline ? (
               <div className="grid gap-2">
                 <Label htmlFor="meetingLink">Link da reunião</Label>
-                <Input id="meetingLink" placeholder="https://..." {...register("meetingLink")} />
+                <Input
+                  id="meetingLink"
+                  placeholder="https://..."
+                  {...register('meetingLink')}
+                />
                 {/* {errors.meetingLink && <p className="text-xs text-red-600">{String(errors.meetingLink.message)}</p>} */}
               </div>
             ) : (
               <div className="grid gap-2">
                 <Label htmlFor="address">Endereço</Label>
-                <Input id="address" placeholder="Rua, número - bairro, cidade/UF" {...register("address")} />
+                <Input
+                  id="address"
+                  placeholder="Rua, número - bairro, cidade/UF"
+                  {...register('address')}
+                />
                 {/* {errors.address && <p className="text-xs text-red-600">{String(errors.address.message)}</p>} */}
               </div>
             )}
@@ -244,11 +294,20 @@ export function EventStepCard({ step }: any) {
             <Separator />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpenEdit(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpenEdit(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="bg-[#5127FF] hover:bg-[#5127FF]/90" disabled={isPending} aria-busy={isPending}>
-                {isPending ? "Salvando..." : "Salvar alterações"}
+              <Button
+                type="submit"
+                className="bg-[#5127FF] hover:bg-[#5127FF]/90"
+                disabled={isPending}
+                aria-busy={isPending}
+              >
+                {isPending ? 'Salvando...' : 'Salvar alterações'}
               </Button>
             </DialogFooter>
           </form>

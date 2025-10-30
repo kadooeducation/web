@@ -1,9 +1,9 @@
-import ky, { HTTPError, type KyInstance } from "ky";
-import type { CookiesFn } from "cookies-next/server";
-import { getCookie } from "cookies-next";
+import { getCookie } from 'cookies-next'
+import type { CookiesFn } from 'cookies-next/server'
+import ky, { HTTPError, type KyInstance } from 'ky'
 
 export class KyAdapter {
-  private readonly api: KyInstance;
+  private readonly api: KyInstance
 
   constructor() {
     this.api = ky.create({
@@ -12,57 +12,57 @@ export class KyAdapter {
       hooks: {
         beforeRequest: [
           async (request) => {
-            let cookieStore: CookiesFn | undefined;
+            let cookieStore: CookiesFn | undefined
 
-            if (typeof window === "undefined") {
-              const { cookies: serverCookies } = await import("next/headers");
+            if (typeof window === 'undefined') {
+              const { cookies: serverCookies } = await import('next/headers')
 
-              cookieStore = serverCookies;
+              cookieStore = serverCookies
             }
 
-            const token = await getCookie("kadoo.token", {
+            const token = await getCookie('kadoo.token', {
               cookies: cookieStore,
-            });
+            })
 
             if (token) {
-              request.headers.set("Authorization", `Bearer ${token}`);
+              request.headers.set('Authorization', `Bearer ${token}`)
             }
           },
         ],
       },
-    });
+    })
   }
 
   async post<T>(url: string, body: object): Promise<T> {
     try {
-      const res = await this.api.post(url, { json: body });
+      const res = await this.api.post(url, { json: body })
       return res.json<T>()
     } catch (err) {
-      if (err instanceof HTTPError) throw err;
-      throw err;
+      if (err instanceof HTTPError) throw err
+      throw err
     }
   }
 
   async get<T>(url: string) {
     try {
-      const res = await this.api.get(url);
-      return res.json<T>();
+      const res = await this.api.get(url)
+      return res.json<T>()
     } catch (err) {
-      if (err instanceof HTTPError) throw err;
-      throw err;
+      if (err instanceof HTTPError) throw err
+      throw err
     }
   }
 
   async delete(url: string) {
     try {
-      const res = await this.api.delete(url);
-      const text = await res.text();
-      return text ? JSON.parse(text) : null;
+      const res = await this.api.delete(url)
+      const text = await res.text()
+      return text ? JSON.parse(text) : null
     } catch (err) {
-      if (err instanceof HTTPError) throw err;
-      throw err;
+      if (err instanceof HTTPError) throw err
+      throw err
     }
   }
 }
 
-export const kyClient = new KyAdapter();
+export const kyClient = new KyAdapter()

@@ -9,4 +9,3 @@ export interface CreateEdictDTO {
   file: string
   categories: string[]
 }
-

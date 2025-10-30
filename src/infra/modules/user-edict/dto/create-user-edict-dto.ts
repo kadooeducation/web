@@ -1,4 +1,4 @@
-export interface CreateUserEdictDTO { 
+export interface CreateUserEdictDTO {
   userId: string
   edictId: string
 }
