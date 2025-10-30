@@ -43,8 +43,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/presentation/external/components/ui/sidebar'
-import type { EnumProfile } from '@/presentation/shared/layout/components/profile/profile'
 import { APP_ROUTES } from '@/shared/constants/routes'
+import type { ProfileEnum } from '@/business/domain/enum/enum-profile'
 
 const menuItems = [
   { title: 'Home', icon: Home, url: APP_ROUTES.home },
@@ -78,7 +78,7 @@ export default function UsersEdictsPage() {
   const { push } = useRouter()
 
   const [allUsers, setAllUsers] = useState<
-    { id: string; name: string; role: EnumProfile }[]
+    { id: string; name: string; role: ProfileEnum }[]
   >([])
   const [edicts, setEdicts] = useState<Edict[]>([])
 

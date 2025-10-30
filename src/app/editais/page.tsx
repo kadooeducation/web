@@ -18,7 +18,7 @@ import { Card, CardContent } from '@/presentation/external/components/ui/card'
 import { Footer } from '@/presentation/external/components/ui/footer'
 import { Input } from '@/presentation/external/components/ui/input'
 import { Loading } from '@/presentation/shared/layout/components/loading/loading'
-import type { EnumProfile } from '@/presentation/shared/layout/components/profile/profile'
+import type { ProfileEnum } from '@/business/domain/enum/enum-profile'
 
 const editaisData = [
   {
@@ -166,7 +166,7 @@ const statusOptions = ['Todos', 'aberto', 'inscrito', 'fechado']
 const difficultyOptions = ['Todos', 'Iniciante', 'Intermediário', 'Avançado']
 
 export default function EditaisPage() {
-  const [user, setUser] = useState<{ name: string; role: EnumProfile } | null>(
+  const [user, setUser] = useState<{ name: string; role: ProfileEnum } | null>(
     null,
   )
   const [searchTerm, setSearchTerm] = useState('')

@@ -1,7 +1,9 @@
-import { Calendar, Home, Inbox, Projector, Settings } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { kyClient } from '@/infra/external/http/ky-client/api'
+"use client";
+import { Calendar, Home, Inbox, Projector, Settings } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ProfileEnum } from "@/business/domain/enum/enum-profile";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 import {
   Sidebar,
   SidebarContent,
@@ -13,39 +15,39 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/presentation/external/components/ui/sidebar'
-import { EnumProfile } from '../profile/profile'
+} from "@/presentation/external/components/ui/sidebar";
 
 const items = [
   {
-    title: 'Início',
-    url: '/',
+    title: "Início",
+    url: "/",
     icon: Home,
   },
   {
-    title: 'Notificações',
-    url: '#',
+    title: "Notificações",
+    url: "#",
     icon: Inbox,
   },
   {
-    title: 'Certificados Emitidos',
-    url: '#',
+    title: "Certificados Emitidos",
+    url: "#",
     icon: Calendar,
   },
-]
+];
 
 const roles = {
-  [EnumProfile.ROLE_ADMIN]: 'ADMIN',
-  [EnumProfile.ROLE_ENTERPRISE]: 'ENTERPRISE',
-  [EnumProfile.ROLE_MENTOR]: 'MENTOR',
-  [EnumProfile.ROLE_STUDENT]: 'STUDENT',
-} as const
+  [ProfileEnum.ADMIN]: "ADMIN",
+  [ProfileEnum.ENTERPRISE]: "ENTERPRISE",
+  [ProfileEnum.MENTOR]: "MENTOR",
+  [ProfileEnum.STUDENT]: "STUDENT",
+} as const;
 
 export async function AppSidebar() {
   const user = await kyClient.get<{ name: string; role: keyof typeof roles }>(
-    'me',
-  )
+    "me"
+  );
 
+  console.log("user");
 
   return (
     <Sidebar collapsible="icon">
@@ -78,16 +80,16 @@ export async function AppSidebar() {
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
-                  {item.title === 'Notificações' && (
+                  {item.title === "Notificações" && (
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   )}
 
-                  {item.title === 'Certificados Emitidos' && (
+                  {item.title === "Certificados Emitidos" && (
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   )}
                 </SidebarMenuItem>
               ))}
-              {roles[user.role] === 'ADMIN' && (
+              {roles[user.role] === "ADMIN" && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link href="/adm">
@@ -202,5 +204,5 @@ export async function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter> */}
     </Sidebar>
-  )
+  );
 }

@@ -9,7 +9,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from '@/presentation/external/components/ui/sidebar'
-import type { EnumProfile } from '@/presentation/shared/layout/components/profile/profile'
+import type { ProfileEnum } from '@/business/domain/enum/enum-profile'
 
 export type EditalStatus = 'inscrito' | 'em_analise' | 'aprovado' | 'reprovado'
 
@@ -64,7 +64,7 @@ const editcs = [
 ]
 
 export default function MeusEditaisPage() {
-  const [user, setUser] = useState<{ name: string; role: EnumProfile } | null>(
+  const [user, setUser] = useState<{ name: string; role: ProfileEnum } | null>(
     null,
   )
   const { push } = useRouter()

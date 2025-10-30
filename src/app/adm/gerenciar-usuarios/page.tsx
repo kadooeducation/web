@@ -38,7 +38,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/presentation/external/components/ui/sidebar'
-import { EnumProfile } from '@/presentation/shared/layout/components/profile/profile'
 import { APP_ROUTES } from '@/shared/constants/routes'
 
 const menuItems = [
@@ -63,17 +62,17 @@ const menuItems = [
 export default function ManagerUsersPage() {
   const { push } = useRouter()
 
-  const [user] = useState<{ name: string; role: EnumProfile } | null>(null)
+  const [user] = useState<{ name: string } | null>(null)
 
-  const role = user?.role as keyof typeof ROLE_USER
+  // const role = user?.role as keyof typeof ROLE_USER
   const firstLetter = user?.name?.charAt(0).toUpperCase()
 
-  const ROLE_USER = {
-    [EnumProfile.ROLE_STUDENT]: 'Estudante',
-    [EnumProfile.ROLE_MENTOR]: 'Mentor',
-    [EnumProfile.ROLE_ENTERPRISE]: 'Empresa',
-    [EnumProfile.ROLE_ADMIN]: 'Administrador',
-  } as const
+  // const ROLE_USER = {
+  //   [EnumProfile.ROLE_STUDENT]: 'Estudante',
+  //   [EnumProfile.ROLE_MENTOR]: 'Mentor',
+  //   [EnumProfile.ROLE_ENTERPRISE]: 'Empresa',
+  //   [EnumProfile.ROLE_ADMIN]: 'Administrador',
+  // } as const
 
   async function handleLogOut() {
     await loginGatewayHttp.logout().then(() => push(APP_ROUTES.login))
@@ -148,7 +147,7 @@ export default function ManagerUsersPage() {
                 </Avatar>
                 <div className="hidden md:block">
                   <p className="font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-sm text-gray-600">{ROLE_USER?.[role]}</p>
+                  {/* <p className="text-sm text-gray-600">{ROLE_USER?.[role]}</p> */}
                 </div>
               </div>
             </div>
