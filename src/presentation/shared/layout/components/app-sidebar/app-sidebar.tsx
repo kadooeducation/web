@@ -1,4 +1,3 @@
-"use client";
 import { Calendar, Home, Inbox, Projector, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,7 +46,7 @@ export async function AppSidebar() {
     "me"
   );
 
-  console.log("user");
+  console.log(user)
 
   return (
     <Sidebar collapsible="icon">
