@@ -1,61 +1,61 @@
-import Link from 'next/link'
-import { Suspense } from 'react'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Skeleton } from '@/presentation/shared/layout/components/skeleton/skeleton'
-import { EnrollmentOverview } from './enrollment-overview'
-import { HighlightMentors } from './highlight-mentors'
-import { WelcomeBanner } from './welcome-banner'
+import Link from "next/link";
+import { Suspense } from "react";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
+import { EnrollmentOverview } from "./enrollment-overview";
+import { HighlightMentors } from "./highlight-mentors";
+import { WelcomeBanner } from "./welcome-banner";
 
 export const edicts = [
   {
     id: 1,
-    title: 'Programa de Aceleração Tech 2024',
-    description: 'Venha participar desse programa para startups inovadoras',
-    category: 'Tecnologia',
-    icon: '💡',
-    status: 'Inscrito',
-    statusColor: 'bg-green-500 text-white',
+    title: "Programa de Aceleração Tech 2024",
+    description: "Venha participar desse programa para startups inovadoras",
+    category: "Tecnologia",
+    icon: "💡",
+    status: "Inscrito",
+    statusColor: "bg-green-500 text-white",
     startDate: new Date(),
     endDate: new Date(),
     enrolled: true,
   },
   {
     id: 2,
-    title: 'Programa de Aceleração Tech 2024',
-    description: 'Venha participar desse programa para startups inovadoras',
-    category: 'Tecnologia',
-    icon: '💡',
-    status: 'Inscrito',
-    statusColor: 'bg-green-500 text-white',
+    title: "Programa de Aceleração Tech 2024",
+    description: "Venha participar desse programa para startups inovadoras",
+    category: "Tecnologia",
+    icon: "💡",
+    status: "Inscrito",
+    statusColor: "bg-green-500 text-white",
     startDate: new Date(),
     endDate: new Date(),
     enrolled: true,
   },
   {
     id: 3,
-    title: 'Programa de Aceleração Tech 2024',
-    description: 'Venha participar desse programa exclusivo',
-    category: 'Tecnologia',
-    icon: '🎯',
-    status: 'Aberto',
-    statusColor: 'bg-[#F4DA02] text-white',
+    title: "Programa de Aceleração Tech 2024",
+    description: "Venha participar desse programa exclusivo",
+    category: "Tecnologia",
+    icon: "🎯",
+    status: "Aberto",
+    statusColor: "bg-[#F4DA02] text-white",
     startDate: new Date(),
     endDate: new Date(),
     enrolled: false,
   },
   {
     id: 4,
-    title: 'Exemplo',
-    description: 'Descrição de exemplo para demonstração',
-    category: 'Exemplo',
-    icon: '📋',
-    status: '',
-    statusColor: 'bg-gray-400',
+    title: "Exemplo",
+    description: "Descrição de exemplo para demonstração",
+    category: "Exemplo",
+    icon: "📋",
+    status: "",
+    statusColor: "bg-gray-400",
     startDate: new Date(),
     endDate: new Date(),
     enrolled: false,
   },
-]
+];
 
 export async function HomeSection() {
   return (
@@ -64,7 +64,7 @@ export async function HomeSection() {
       {/* <Header profile={<Profile {...user} />} /> */}
 
       <section className="p-6 space-y-8">
-        <WelcomeBanner />
+        {/* <WelcomeBanner /> */}
 
         {/* <div className="grid gap-6  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
           <Card className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
@@ -217,5 +217,5 @@ export async function HomeSection() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
