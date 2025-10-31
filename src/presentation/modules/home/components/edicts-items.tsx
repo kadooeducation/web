@@ -1,23 +1,23 @@
-'use client'
-import { Calendar } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Card, CardContent } from '@/presentation/external/components/ui/card'
+"use client";
+import { Calendar } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Card, CardContent } from "@/presentation/external/components/ui/card";
 
 interface EdictItemsProps {
   edict: {
-    id: number
-    status: string
-    categories: string[]
-    title: string
-    description: string
-    startDate: Date
-    endDate: Date
-  }
+    id: number;
+    status: string;
+    categories: string[];
+    title: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+  };
 }
 
 export function EdictItems({ edict }: EdictItemsProps) {
-  const { push } = useRouter()
+  const { push } = useRouter();
 
   return (
     <Card
@@ -54,26 +54,28 @@ export function EdictItems({ edict }: EdictItemsProps) {
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="w-4 h-4 text-[#5127FF]" />
               <span className="font-medium">
-                {new Date(edict.startDate).toLocaleString('pt-BR', {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
+                {new Date(edict.startDate).toLocaleString("pt-BR", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  timeZone: "America/Fortaleza",
                 })}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <span className="text-gray-500">até</span>
               <span className="font-medium">
-                {new Date(edict.endDate).toLocaleString('pt-BR', {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
+                {new Date(edict.endDate).toLocaleString("pt-BR", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  timeZone: "America/Fortaleza",
                 })}
               </span>
             </div>
           </div>
 
-          {edict.status === 'Ativo' ? (
+          {edict.status === "Ativo" ? (
             <Button className="w-full bg-gradient-to-r from-[#5127FF] to-[#5127FF]/90 hover:from-[#5127FF]/90 hover:to-[#5127FF] text-white font-semibold py-3 rounded-xl transition-all duration-300 transform group-hover:scale-105 shadow-md hover:shadow-lg mt-auto">
               Saiba mais
             </Button>
@@ -81,5 +83,5 @@ export function EdictItems({ edict }: EdictItemsProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
