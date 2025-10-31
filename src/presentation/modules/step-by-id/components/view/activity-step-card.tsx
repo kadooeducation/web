@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: usado em tipagem externa sem controle */
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Calendar as CalIcon,
   Clock3,
@@ -11,18 +11,20 @@ import {
   MapPin,
   Paperclip,
   X,
-} from 'lucide-react'
-import { useState, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Button } from '@/presentation/external/components/ui/button'
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { deleteActivityStepAction } from "@/app/adm/editais/[id]/(actions)/delete-activity-step-action";
+import { Button } from "@/presentation/external/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/presentation/external/components/ui/card'
+} from "@/presentation/external/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -32,54 +34,48 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/presentation/external/components/ui/dialog'
-import { Input } from '@/presentation/external/components/ui/input'
-import { Separator } from '@/presentation/external/components/ui/separator'
-import { Label } from '@/presentation/shared/components'
+} from "@/presentation/external/components/ui/dialog";
+import { Input } from "@/presentation/external/components/ui/input";
+import { Separator } from "@/presentation/external/components/ui/separator";
+import { Label } from "@/presentation/shared/components";
 
 const fmtDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString('pt-BR') : '-'
+  iso ? new Date(iso).toLocaleDateString("pt-BR") : "-";
 
-const _fmtMode = (s?: string | null) =>
-  s
-    ? s
-        .toString()
-        .toLowerCase()
-        .replace(/^\w/, (c) => c.toUpperCase())
-    : '-'
 
 const stepPill = (step: any) => {
-  if (step.kind === 'event') {
-    const isOnline = step.event?.type === 'online'
+  if (step.kind === "event") {
+    const isOnline = step.event?.type === "online";
     return {
       icon: isOnline ? Link2 : MapPin,
-      text: `Evento ${isOnline ? 'Online' : 'Presencial'}`,
-    }
+      text: `Evento ${isOnline ? "Online" : "Presencial"}`,
+    };
   }
-  return { icon: Footprints, text: 'Atividade' }
-}
+  return { icon: Footprints, text: "Atividade" };
+};
 
 function isoToDateInput(iso?: string) {
-  if (!iso) return ''
-  const d = new Date(iso)
-  const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
+  if (!iso) return "";
+  const d = new Date(iso);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 const schema = z.object({
-  title: z.string().min(1, 'Informe o título.'),
+  title: z.string().min(1, "Informe o título."),
   date: z.string().optional(),
-  dueDate: z.string().min(1, 'Informe a data de entrega.'),
-  file: z.string().url('URL inválida').optional().or(z.literal('')),
-})
+  dueDate: z.string().min(1, "Informe a data de entrega."),
+  file: z.string().url("URL inválida").optional().or(z.literal("")),
+});
 export function ActivityStepCard({ step }: any) {
-  const [isPending, startTransition] = useTransition()
-  const [openEdit, setOpenEdit] = useState(false)
+  console.log(step)
+  const [isPending, startTransition] = useTransition();
+  const [openEdit, setOpenEdit] = useState(false);
 
-  const pill = stepPill(step)
-  const PillIcon = pill.icon
+  const pill = stepPill(step);
+  const PillIcon = pill.icon;
 
   const {
     register,
@@ -90,21 +86,21 @@ export function ActivityStepCard({ step }: any) {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: step.title ?? '',
+      title: step.title ?? "",
       date: isoToDateInput(step.date),
       dueDate: isoToDateInput(step.activity?.dueDate),
-      file: step.activity?.file ?? '',
+      file: step.activity?.file ?? "",
     },
-  })
+  });
 
-  const fileValue = (watch('file') as string | undefined)?.trim()
+  const fileValue = (watch("file") as string | undefined)?.trim();
 
   function handleDeleteActivity() {
     startTransition(async () => {
-      // await deleteActivityStepAction(step.id)
-      // toast.success(`Etapa ${step.title} deletada com sucesso!`)
-      // if (typeof window !== "undefined") window.location.reload()
-    })
+      await deleteActivityStepAction(step.id).then(() => {
+        toast.success(`Etapa ${step.title} deletada com sucesso!`);
+      });
+    });
   }
 
   function onSubmit(_values: any) {
@@ -116,14 +112,14 @@ export function ActivityStepCard({ step }: any) {
         //   dueDate: values.dueDate,
         //   file: values.file || null,
         // })
-        toast.success('Atividade atualizada com sucesso!')
-        setOpenEdit(false)
-        if (typeof window !== 'undefined') window.location.reload()
+        toast.success("Atividade atualizada com sucesso!");
+        setOpenEdit(false);
+        if (typeof window !== "undefined") window.location.reload();
       } catch (err) {
-        console.error(err)
-        toast.error('Erro ao atualizar a atividade.')
+        console.error(err);
+        toast.error("Erro ao atualizar a atividade.");
       }
-    })
+    });
   }
 
   return (
@@ -143,7 +139,6 @@ export function ActivityStepCard({ step }: any) {
             Editar
           </Button>
 
-          {/* DELETAR */}
           <Dialog>
             <DialogContent className="sm:max-w-[400px]">
               <DialogHeader>
@@ -170,7 +165,7 @@ export function ActivityStepCard({ step }: any) {
                       Deletando etapa...
                     </>
                   ) : (
-                    'Deletar'
+                    "Deletar"
                   )}
                 </Button>
               </DialogFooter>
@@ -190,7 +185,7 @@ export function ActivityStepCard({ step }: any) {
           <span>Data: {fmtDate(step.date)}</span>
         </div>
 
-        {step.kind === 'activity' && (
+        {step.kind === "activity" && (
           <>
             <div className="flex items-center gap-2">
               <Clock3 className="h-4 w-4 text-gray-500" />
@@ -214,7 +209,7 @@ export function ActivityStepCard({ step }: any) {
             <Separator className="my-2" />
             <div className="text-xs text-gray-500">
               formato: Atividade
-              {step.activity?.file ? ' • arquivo obrigatório' : ''}
+              {step.activity?.file ? " • arquivo obrigatório" : ""}
             </div>
           </>
         )}
@@ -236,7 +231,7 @@ export function ActivityStepCard({ step }: any) {
               <Input
                 id="title"
                 placeholder="Título da atividade"
-                {...register('title')}
+                {...register("title")}
               />
               {errors.title && (
                 <p className="text-xs text-red-600">
@@ -247,7 +242,7 @@ export function ActivityStepCard({ step }: any) {
 
             <div className="grid gap-2">
               <Label htmlFor="date">Data da etapa (opcional)</Label>
-              <Input id="date" type="date" {...register('date')} />
+              <Input id="date" type="date" {...register("date")} />
               {errors.date && (
                 <p className="text-xs text-red-600">
                   {String(errors.date.message)}
@@ -257,7 +252,7 @@ export function ActivityStepCard({ step }: any) {
 
             <div className="grid gap-2">
               <Label htmlFor="dueDate">Data de entrega</Label>
-              <Input id="dueDate" type="date" {...register('dueDate')} />
+              <Input id="dueDate" type="date" {...register("dueDate")} />
               {errors.dueDate && (
                 <p className="text-xs text-red-600">
                   {String(errors.dueDate.message)}
@@ -270,7 +265,7 @@ export function ActivityStepCard({ step }: any) {
               <Input
                 id="file"
                 placeholder="https://..."
-                {...register('file')}
+                {...register("file")}
               />
               {errors.file && (
                 <p className="text-xs text-red-600">
@@ -299,7 +294,7 @@ export function ActivityStepCard({ step }: any) {
                     size="icon"
                     variant="ghost"
                     className="h-7 w-7"
-                    onClick={() => setValue('file', '')}
+                    onClick={() => setValue("file", "")}
                     aria-label="Remover arquivo"
                   >
                     <X className="h-4 w-4 text-gray-500" />
@@ -324,12 +319,12 @@ export function ActivityStepCard({ step }: any) {
                 disabled={isPending}
                 aria-busy={isPending}
               >
-                {isPending ? 'Salvando...' : 'Salvar alterações'}
+                {isPending ? "Salvando..." : "Salvar alterações"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
     </Card>
-  )
+  );
 }

@@ -36,7 +36,12 @@ export class KyAdapter {
   async post<T>(url: string, body: object): Promise<T> {
     try {
       const res = await this.api.post(url, { json: body })
-      return res.json<T>()
+
+      if (res.status === 201 || res.status === 204)  {
+        return { } as T
+      }
+
+      return res.json<T>() ?? null
     } catch (err) {
       if (err instanceof HTTPError) throw err
       throw err
@@ -46,7 +51,7 @@ export class KyAdapter {
   async get<T>(url: string) {
     try {
       const res = await this.api.get(url)
-      return res.json<T>()
+      return res.json<T>() ?? null
     } catch (err) {
       if (err instanceof HTTPError) throw err
       throw err

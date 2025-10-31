@@ -1,10 +1,11 @@
-'use server'
+"use server";
 
-import { revalidatePath } from 'next/cache'
-import { activityStepGatewayHttp } from '@/infra/modules/activity-step/activity-step-gateway-http'
+import { revalidatePath } from "next/cache";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 
 export async function deleteActivityStepAction(stepId: number) {
-  await activityStepGatewayHttp.delete(stepId)
+  await kyClient.delete(`steps/${stepId}`);
 
-  revalidatePath('/adm/editais/[id]', 'page')
+  revalidatePath("/adm/editais]", "page");
+
 }

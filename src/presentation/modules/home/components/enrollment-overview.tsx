@@ -1,24 +1,24 @@
-import { kyClient } from '@/infra/external/http/ky-client/api'
-import { EdictItems } from './edicts-items'
+import { kyClient } from "@/infra/external/http/ky-client/api";
+import { EdictItems } from "./edicts-items";
 
 export async function EnrollmentOverview() {
-  const edicts =
-    await kyClient.get<
-      {
-        id: number
-        status: string
-        title: string
-        description: string
-        organizer: string
-        file: string
-        contact: string
-        location: string
-        startDate: Date
-        endDate: Date
-        categories: string[]
-      }[]
-    >('user-edict')
+  const edicts = await kyClient.get<
+    {
+      id: number;
+      status: string;
+      title: string;
+      description: string;
+      organizer: string;
+      file: string;
+      contact: string;
+      location: string;
+      startDate: Date;
+      endDate: Date;
+      categories: string[];
+    }[]
+  >("user-edict");
 
+  console.log(edicts);
   // const edicts = await edictGatewayHttp.edictsAttachUser();
 
   return (
@@ -27,5 +27,5 @@ export async function EnrollmentOverview() {
         <EdictItems key={edict.id} edict={edict} />
       ))}
     </div>
-  )
+  );
 }

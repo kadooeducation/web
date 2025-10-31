@@ -1,9 +1,12 @@
-'use client'
+"use client";
 
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Card } from '@/presentation/external/components/ui/card'
+import { Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { kyClient } from "@/infra/external/http/ky-client/api";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Card } from "@/presentation/external/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -13,15 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/presentation/external/components/ui/dialog'
-import { Input } from '@/presentation/external/components/ui/input'
+} from "@/presentation/external/components/ui/dialog";
+import { Input } from "@/presentation/external/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/presentation/external/components/ui/select'
+} from "@/presentation/external/components/ui/select";
 import {
   Table,
   TableBody,
@@ -29,31 +32,43 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/presentation/external/components/ui/table'
+} from "@/presentation/external/components/ui/table";
 
 export const statusColorMap: Record<string, string> = {
-  Aberto: 'bg-green-100 text-green-700',
-  Encerrado: 'bg-red-100 text-red-700',
-  'Em breve': 'bg-yellow-100 text-yellow-700',
-}
+  Aberto: "bg-green-100 text-green-700",
+  Encerrado: "bg-red-100 text-red-700",
+  "Em breve": "bg-yellow-100 text-yellow-700",
+};
 
 interface AdmEdictsTableProps {
   edicts: {
-    id: number
-    status: string
-    categories: string[]
-    title: string
-    description: string
-    startDate: Date
-    endDate: Date
-  }[]
+    id: number;
+    status: string;
+    categories: string[];
+    title: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+  }[];
 }
 
 export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
-  function handleDelete(_id: number) {
-    // if (confirm("Deseja excluir este edital?")) {
-    //   setItems(prev => prev.filter(e => e.id !== id))
-    // }
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleDelete(id: number) {
+    setIsLoading(true);
+
+    await kyClient
+      .delete(`edict/${id}`)
+      .then(() => {
+        toast.success("Edital deletado com sucesso.");
+      })
+      .catch(() => {
+        toast.error("Erro ao deletar o edital.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
@@ -127,7 +142,9 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColorMap[e.status]}`}
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        statusColorMap[e.status]
+                      }`}
                     >
                       {e.status}
                     </span>
@@ -171,7 +188,8 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                             variant="destructive"
                             onClick={() => handleDelete(e.id)}
                           >
-                            Deletar
+                            {isLoading ? "Deletando" : "Deletar"}
+                            {isLoading && <Loader2 />}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
@@ -214,5 +232,5 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
         </div> */}
       </div>
     </Dialog>
-  )
+  );
 }

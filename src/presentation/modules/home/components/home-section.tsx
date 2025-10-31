@@ -105,9 +105,9 @@ export async function HomeSection() {
               Ver Todos
             </Button>
           </div>
-          {/* <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
+          <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
             <EnrollmentOverview />
-          </Suspense> */}
+          </Suspense>
         </div>
 
         <div className="space-y-8">

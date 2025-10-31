@@ -13,7 +13,7 @@ export async function createOnlineStepAction(
     description: string
   },
 ) {
-  await kyClient.post(`event/in-person`, {
+  await kyClient.post(`event/online`, {
     title: input.title,
     date: input.date,
     mode: input.modality,

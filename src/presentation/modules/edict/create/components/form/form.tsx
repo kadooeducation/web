@@ -1,114 +1,111 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import clsx from 'clsx'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { Calendar, FileText, Loader2, Tag } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { toast } from 'sonner'
-import { edictGatewayHttp } from '@/infra/modules/edict/edict-gateway-http'
-import { Button } from '@/presentation/external/components/ui/button'
-
-import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
-import { Checkbox } from '@/presentation/external/components/ui/checkbox'
+import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar, FileText, Loader2, Tag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
+import { kyClient } from "@/infra/external/http/ky-client/api";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Calendar as CalendarShad } from "@/presentation/external/components/ui/calendar";
+import { Checkbox } from "@/presentation/external/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/presentation/external/components/ui/popover'
-import { ScrollArea } from '@/presentation/external/components/ui/scroll-area'
-import { Separator } from '@/presentation/external/components/ui/separator'
-import { Textarea } from '@/presentation/external/components/ui/textarea'
-import { cn } from '@/presentation/external/lib/utils'
-import { Input, Label } from '@/presentation/shared/components'
-import type { CreateEdictValidation } from '@/validation/protocols/create-edict/edict'
-import { createEdictValidation } from '@/validation/validators/create-edict/create-edict-validation'
+} from "@/presentation/external/components/ui/popover";
+import { ScrollArea } from "@/presentation/external/components/ui/scroll-area";
+import { Separator } from "@/presentation/external/components/ui/separator";
+import { Textarea } from "@/presentation/external/components/ui/textarea";
+import { cn } from "@/presentation/external/lib/utils";
+import { Input, Label } from "@/presentation/shared/components";
+import type { CreateEdictValidation } from "@/validation/protocols/create-edict/edict";
+import { createEdictValidation } from "@/validation/validators/create-edict/create-edict-validation";
 
 const availableCategories = [
-  'Tecnologia',
-  'Impacto Social',
-  'Sustentabilidade',
-  'Saúde',
-  'Educação',
-  'Fintech',
-  'E-commerce',
-  'Agritech',
-  'Foodtech',
-  'Mobilidade',
-]
+  "Tecnologia",
+  "Impacto Social",
+  "Sustentabilidade",
+  "Saúde",
+  "Educação",
+  "Fintech",
+  "E-commerce",
+  "Agritech",
+  "Foodtech",
+  "Mobilidade",
+];
 
 export async function uploadFile<T>(file: File): Promise<T> {
-  const formData = new FormData()
-  formData.set('file', file)
+  const formData = new FormData();
+  formData.set("file", file);
 
   const response = await fetch(`/api/upload-file`, {
-    method: 'POST',
+    method: "POST",
     body: formData,
-  })
+  });
 
   if (!response.ok) {
-    throw new Error(`Erro ao enviar`)
+    throw new Error(`Erro ao enviar`);
   }
 
-  const data: T = await response.json()
-  return data
+  const data: T = await response.json();
+  return data;
 }
 
 export function Form() {
-  const { push } = useRouter()
-  const [previewMode, setPreviewMode] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [edictFile, setEdictFile] = useState<File | null>(null)
+  const { push } = useRouter();
+  const [previewMode, setPreviewMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [edictFile, setEdictFile] = useState<File | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-  } = useForm<CreateEdictValidation>({
-    resolver: zodResolver(createEdictValidation),
-    defaultValues: {
-      categories: [],
-    },
-  })
+  const { register, handleSubmit, control, watch } =
+    useForm<CreateEdictValidation>({
+      resolver: zodResolver(createEdictValidation),
+      defaultValues: {
+        categories: [],
+      },
+    });
 
   async function handleCreateEdictForm(data: CreateEdictValidation) {
-    setLoading(true)
+    setLoading(true);
 
     if (!edictFile) {
-      toast.error('Arquivo do edital é obrigatório.')
-      return
+      toast.error("Arquivo do edital é obrigatório.");
+      return;
     }
 
     try {
       const { url: edictUrl } = await uploadFile<{
-        url: string
-        error: boolean
-      }>(edictFile)
+        url: string;
+        error: boolean;
+      }>(edictFile);
 
-      await edictGatewayHttp.create({
-        ...data,
-        file: edictUrl,
-      })
+      await kyClient
+        .post("edict", {
+          ...data,
+          file: edictUrl,
+        })
+        .then(() => {
+          toast.success("Edital publicado com sucesso!");
+        });
 
-      toast.success('Edital publicado com sucesso!')
-
-      push('/adm/editais')
+      push("/adm/editais");
     } catch {
-      toast.error('Falha no upload. Verifique os arquivos e tente novamente.')
+      toast.error("Falha no upload. Verifique os arquivos e tente novamente.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  const startDate = watch('startDate')
-  const endEdictDate = watch('endDate')
-  const descriptionWatched = watch('description')
+  const startDate = watch("startDate");
+  const endEdictDate = watch("endDate");
+  const descriptionWatched = watch("description");
 
   return (
     <form
@@ -136,7 +133,7 @@ export function Form() {
               id="title"
               placeholder="Ex: Programa de Aceleração Tech 2024"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register('title')}
+              {...register("title")}
             />
           </Input.Root>
 
@@ -152,10 +149,10 @@ export function Form() {
               <Button
                 onClick={() => setPreviewMode(false)}
                 className={clsx(
-                  'cursor-pointer transition-all',
+                  "cursor-pointer transition-all bg-transparent hover:bg-transparent",
                   !previewMode
-                    ? 'text-[#5127FF] font-semibold'
-                    : 'text-gray-400',
+                    ? "text-[#5127FF] font-semibold"
+                    : "text-gray-400"
                 )}
               >
                 Editar
@@ -166,10 +163,8 @@ export function Form() {
               <Button
                 onClick={() => setPreviewMode(true)}
                 className={clsx(
-                  'cursor-pointer transition-all',
-                  previewMode
-                    ? 'text-[#5127FF] font-semibold'
-                    : 'text-gray-400',
+                  "cursor-pointer transition-all  bg-transparent hover:bg-transparent",
+                  previewMode ? "text-[#5127FF] font-semibold" : "text-gray-400"
                 )}
               >
                 Preview
@@ -182,7 +177,7 @@ export function Form() {
                 placeholder="Digite a descrição do edital aqui usando markdown..."
                 rows={12}
                 className="resize-none rounded-md border border-gray-300 focus:border-[#5127FF]"
-                {...register('description')}
+                {...register("description")}
               />
             ) : (
               <ScrollArea className="h-[300px] rounded-md border border-gray-300 p-4 bg-gray-50">
@@ -198,7 +193,7 @@ export function Form() {
                     p: (props) => <p className="leading-relaxed" {...props} />,
                   }}
                 >
-                  {descriptionWatched || '_Sem conteúdo para pré-visualizar._'}
+                  {descriptionWatched || "_Sem conteúdo para pré-visualizar._"}
                 </ReactMarkdown>
               </ScrollArea>
             )}
@@ -215,7 +210,7 @@ export function Form() {
               id="organizer"
               placeholder="Escreva quem irá organizar o Edital"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register('organizer')}
+              {...register("organizer")}
             />
           </Input.Root>
 
@@ -230,7 +225,7 @@ export function Form() {
               id="contact"
               placeholder="Email para contato"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register('contact')}
+              {...register("contact")}
             />
           </Input.Root>
 
@@ -245,7 +240,7 @@ export function Form() {
               id="location"
               placeholder="Ex: São Luís, Imperatriz"
               className="h-12 rounded-lg border-gray-200 focus:border-[#5127FF] focus:ring-[#5127FF]"
-              {...register('location')}
+              {...register("location")}
             />
           </Input.Root>
         </div>
@@ -272,14 +267,14 @@ export function Form() {
                 <Button
                   variant="outline"
                   className={cn(
-                    'w-[240px] pl-3 text-left font-normal',
-                    !startDate && 'text-muted-foreground',
+                    "w-[240px] pl-3 text-left font-normal",
+                    !startDate && "text-muted-foreground"
                   )}
                 >
                   <span className="text-left w-full">
                     {startDate
-                      ? format(startDate, 'PPP', { locale: ptBR })
-                      : 'Selecione uma data'}
+                      ? format(startDate, "PPP", { locale: ptBR })
+                      : "Selecione uma data"}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -316,14 +311,14 @@ export function Form() {
                   disabled={!startDate}
                   variant="outline"
                   className={cn(
-                    'w-[240px] pl-3 text-left font-normal',
-                    !endEdictDate && 'text-muted-foreground',
+                    "w-[240px] pl-3 text-left font-normal",
+                    !endEdictDate && "text-muted-foreground"
                   )}
                 >
                   <span className="text-left w-full">
                     {endEdictDate
-                      ? format(endEdictDate, 'PPP', { locale: ptBR })
-                      : 'Selecione uma data'}
+                      ? format(endEdictDate, "PPP", { locale: ptBR })
+                      : "Selecione uma data"}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -358,8 +353,8 @@ export function Form() {
             accept="application/pdf"
             className="w-full"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const file = e.target.files?.[0] ?? null
-              setEdictFile(file)
+              const file = e.target.files?.[0] ?? null;
+              setEdictFile(file);
             }}
           />
         </Input.Root>
@@ -379,15 +374,15 @@ export function Form() {
           render={({ field }) => (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {availableCategories.map((category) => {
-                const isChecked = field.value.includes(category)
+                const isChecked = field.value.includes(category);
 
                 const toggleCategory = () => {
                   if (isChecked) {
-                    field.onChange(field.value.filter((c) => c !== category))
+                    field.onChange(field.value.filter((c) => c !== category));
                   } else {
-                    field.onChange([...field.value, category])
+                    field.onChange([...field.value, category]);
                   }
-                }
+                };
 
                 return (
                   <div key={category} className="flex items-center space-x-2">
@@ -399,7 +394,7 @@ export function Form() {
                     />
                     <Label htmlFor={`category-${category}`}>{category}</Label>
                   </div>
-                )
+                );
               })}
             </div>
           )}
@@ -786,7 +781,7 @@ export function Form() {
           className="bg-[#F4DA02] text-black hover:bg-[#F4DA02]/90 font-semibold px-8 py-3 h-auto"
         >
           {loading && <Loader2 className="h-5 w-5 animate-spin" />}
-          {loading ? 'Publicando...' : 'Publicar Edital'}
+          {loading ? "Publicando..." : "Publicar Edital"}
         </Button>
 
         <Button
@@ -798,5 +793,5 @@ export function Form() {
         </Button>
       </div>
     </form>
-  )
+  );
 }
