@@ -10,6 +10,7 @@ import {
 import { ApplicantsBarChart } from '@/presentation/modules/home/components/applicants-bar-chart'
 import { MentorAreasPieChart } from '@/presentation/modules/home/components/mentors-areas-pie-chart'
 import { PendingMentorsList } from '@/presentation/modules/home/components/pending-mentors-list'
+import { formatDate } from '@/shared/functions/format-date'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,15 +86,13 @@ export default async function AdminPage() {
                               <div className="flex items-center gap-2 text-sm">
                                 <Calendar className="w-4 h-4 text-[#5127FF]" />
                                 <span className="font-medium">
-                                  {new Date(
-                                    edict.startDate,
-                                  ).toLocaleDateString()}
+                                  {formatDate(edict.startDate)}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                 <span className="text-gray-500">até</span>
                                 <span className="font-medium">
-                                  {new Date(edict.endDate).toLocaleDateString()}
+                                  {formatDate(edict.endDate)}
                                 </span>
                               </div>
                             </div>

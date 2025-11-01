@@ -3,6 +3,7 @@ import { Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Card, CardContent } from "@/presentation/external/components/ui/card";
+import { formatDate } from "@/shared/functions/format-date";
 
 interface EdictItemsProps {
   edict: {
@@ -54,7 +55,7 @@ export function EdictItems({ edict }: EdictItemsProps) {
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="w-4 h-4 text-[#5127FF]" />
               <span className="font-medium">
-                {new Date(edict.startDate).toLocaleString("pt-BR", {
+                {formatDate(edict.startDate, {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
@@ -65,7 +66,7 @@ export function EdictItems({ edict }: EdictItemsProps) {
             <div className="flex items-center gap-2 text-sm">
               <span className="text-gray-500">até</span>
               <span className="font-medium">
-                {new Date(edict.endDate).toLocaleString("pt-BR", {
+                {formatDate(edict.endDate, {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
