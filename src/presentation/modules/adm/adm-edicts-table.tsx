@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/presentation/external/components/ui/table";
+import { formatDate } from "@/shared/functions/format-date";
 
 export const statusColorMap: Record<string, string> = {
   Aberto: "bg-green-100 text-green-700",
@@ -133,11 +134,11 @@ export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
                   <TableCell className="font-medium">{e.title}</TableCell>
                   <TableCell>
                     <span className="text-sm text-gray-700">
-                      {new Date(e.startDate).toLocaleDateString()}
+                      {formatDate(e.startDate)}
                     </span>
                     <span className="mx-1 text-gray-400">até</span>
                     <span className="text-sm text-gray-700">
-                      {new Date(e.endDate).toLocaleDateString()}
+                      {formatDate(e.endDate)}
                     </span>
                   </TableCell>
                   <TableCell>
