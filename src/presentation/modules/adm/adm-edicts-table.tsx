@@ -17,7 +17,7 @@ import {
 } from "@tanstack/react-table";
 import { format, parse } from "date-fns";
 import { EllipsisIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Checkbox } from "@/presentation/external/components/ui/checkbox";
 import {
@@ -35,6 +35,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/presentation/external/components/ui/table";
+import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/presentation/external/components/ui/dialog";
+import { deleteEdictAction } from "@/app/adm/editais/actions";
 
 type Edict = {
   id: number;
@@ -43,11 +46,10 @@ type Edict = {
   startDate: Date;
   endDate: Date;
   organizer: string;
-  status: string; // "ABERTO" | "ENCERRADO" | "EM BREVE"
+  status: string; 
   categories: string[];
 };
 
-// --- Helper de data (date-fns puro, sem T00 e sem toLocale) ---
 const fmtBR = (d: string) =>
   format(parse(d, "yyyy-MM-dd", new Date()), "dd/MM/yyyy");
 
@@ -69,7 +71,6 @@ const multiColumnFilterFn: FilterFn<Edict> = (row, _columnId, filterValue) => {
   return searchable.includes(query);
 };
 
-// --- Colunas seguindo o layout da Tabela 1 ---
 const columns: ColumnDef<Edict>[] = [
   {
     id: "select",
@@ -199,7 +200,7 @@ export function KadooEdictsTable({ edicts }: { edicts: Edict[] }) {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-12">
       <div className="overflow-hidden rounded-md border bg-background">
         <Table className="table-fixed">
           <TableHeader>
@@ -252,34 +253,85 @@ export function KadooEdictsTable({ edicts }: { edicts: Edict[] }) {
   );
 }
 
-function RowActions({ row }: { row: Row<Edict> }) {
+export function RowActions({ row }: { row: Row<Edict> }) {
+  const { push } = useRouter();
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const edictId = row.original.id;
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className="flex justify-end">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="shadow-none"
-            aria-label="Ações"
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div className="flex justify-end">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="shadow-none"
+              aria-label="Ações"
+            >
+              <EllipsisIcon size={16} aria-hidden="true" />
+            </Button>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => push(`/adm/editais/editar/${edictId}`)}
+            >
+              <span>Editar</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <span>Duplicar</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setOpen(true)}
+            >
+              <span>Excluir</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Excluir edital</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este edital? Essa ação não pode ser
+              desfeita.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+
+              startTransition(async () => {
+                await deleteEdictAction(edictId);
+                setOpen(false);
+              });
+            }}
+            className="mt-4"
           >
-            <EllipsisIcon size={16} aria-hidden="true" />
-          </Button>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <span>Editar</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <span>Duplicar</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="text-destructive focus:text-destructive">
-            <span>Excluir</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isPending}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" variant="destructive" disabled={isPending}>
+                {isPending ? "Excluindo..." : "Excluir"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Calendar,
@@ -10,262 +10,258 @@ import {
   Star,
   TrendingUp,
   Users,
-} from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
-import { userGatewayHttp } from '@/infra/modules/user/user-gateway-http'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Card, CardContent } from '@/presentation/external/components/ui/card'
-import { Footer } from '@/presentation/external/components/ui/footer'
-import { Input } from '@/presentation/external/components/ui/input'
-import { Loading } from '@/presentation/shared/layout/components/loading/loading'
-import type { ProfileEnum } from '@/business/domain/enum/enum-profile'
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import type { ProfileEnum } from "@/business/domain/enum/enum-profile";
+import { userGatewayHttp } from "@/infra/modules/user/user-gateway-http";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Card, CardContent } from "@/presentation/external/components/ui/card";
+import { Footer } from "@/presentation/external/components/ui/footer";
+import { Input } from "@/presentation/external/components/ui/input";
+import { Loading } from "@/presentation/shared/layout/components/loading/loading";
 
 const editaisData = [
   {
     id: 1,
-    title: 'Programa de Aceleração Tech 2024',
+    title: "Programa de Aceleração Tech 2024",
     description:
-      'Programa completo para startups de tecnologia com mentoria especializada, networking e investimento de até R$ 500k',
-    category: 'Tecnologia',
-    status: 'inscrito',
-    icon: '🚀',
-    startDate: '2025-07-17',
-    endDate: '2025-12-15',
-    location: 'São Paulo, SP',
+      "Programa completo para startups de tecnologia com mentoria especializada, networking e investimento de até R$ 500k",
+    category: "Tecnologia",
+    status: "inscrito",
+    icon: "🚀",
+    startDate: "2025-07-17",
+    endDate: "2025-12-15",
+    location: "São Paulo, SP",
     participants: 150,
-    investment: 'R$ 500k',
-    duration: '6 meses',
-    difficulty: 'Intermediário',
+    investment: "R$ 500k",
+    duration: "6 meses",
+    difficulty: "Intermediário",
   },
   {
     id: 2,
-    title: 'Aceleração de Impacto Social',
+    title: "Aceleração de Impacto Social",
     description:
-      'Para negócios que geram impacto social positivo. Foco em sustentabilidade e transformação social',
-    category: 'Impacto Social',
-    status: 'inscrito',
-    icon: '💡',
-    startDate: '2025-07-17',
-    endDate: '2025-11-30',
-    location: 'Rio de Janeiro, RJ',
+      "Para negócios que geram impacto social positivo. Foco em sustentabilidade e transformação social",
+    category: "Impacto Social",
+    status: "inscrito",
+    icon: "💡",
+    startDate: "2025-07-17",
+    endDate: "2025-11-30",
+    location: "Rio de Janeiro, RJ",
     participants: 80,
-    investment: 'R$ 300k',
-    duration: '4 meses',
-    difficulty: 'Iniciante',
+    investment: "R$ 300k",
+    duration: "4 meses",
+    difficulty: "Iniciante",
   },
   {
     id: 3,
-    title: 'Scale-up Innovation Program',
+    title: "Scale-up Innovation Program",
     description:
-      'Para empresas em fase de crescimento que buscam escalar operações e expandir mercados internacionalmente',
-    category: 'Scale-up',
-    status: 'aberto',
-    icon: '🎯',
-    startDate: '2025-08-01',
-    endDate: '2025-12-31',
-    location: 'Belo Horizonte, MG',
+      "Para empresas em fase de crescimento que buscam escalar operações e expandir mercados internacionalmente",
+    category: "Scale-up",
+    status: "aberto",
+    icon: "🎯",
+    startDate: "2025-08-01",
+    endDate: "2025-12-31",
+    location: "Belo Horizonte, MG",
     participants: 50,
-    investment: 'R$ 1M',
-    duration: '5 meses',
-    difficulty: 'Avançado',
+    investment: "R$ 1M",
+    duration: "5 meses",
+    difficulty: "Avançado",
   },
   {
     id: 4,
-    title: 'Fintech Accelerator',
+    title: "Fintech Accelerator",
     description:
-      'Programa especializado para startups do setor financeiro com foco em inovação e regulamentação',
-    category: 'Fintech',
-    status: 'aberto',
-    icon: '💰',
-    startDate: '2025-09-01',
-    endDate: '2026-02-28',
-    location: 'São Paulo, SP',
+      "Programa especializado para startups do setor financeiro com foco em inovação e regulamentação",
+    category: "Fintech",
+    status: "aberto",
+    icon: "💰",
+    startDate: "2025-09-01",
+    endDate: "2026-02-28",
+    location: "São Paulo, SP",
     participants: 30,
-    investment: 'R$ 750k',
-    duration: '6 meses',
-    difficulty: 'Avançado',
+    investment: "R$ 750k",
+    duration: "6 meses",
+    difficulty: "Avançado",
   },
   {
     id: 5,
-    title: 'HealthTech Innovation Hub',
+    title: "HealthTech Innovation Hub",
     description:
-      'Aceleração focada em soluções de saúde digital, telemedicina e biotecnologia',
-    category: 'HealthTech',
-    status: 'aberto',
-    icon: '🏥',
-    startDate: '2025-08-15',
-    endDate: '2026-01-15',
-    location: 'Porto Alegre, RS',
+      "Aceleração focada em soluções de saúde digital, telemedicina e biotecnologia",
+    category: "HealthTech",
+    status: "aberto",
+    icon: "🏥",
+    startDate: "2025-08-15",
+    endDate: "2026-01-15",
+    location: "Porto Alegre, RS",
     participants: 40,
-    investment: 'R$ 600k',
-    duration: '5 meses',
-    difficulty: 'Intermediário',
+    investment: "R$ 600k",
+    duration: "5 meses",
+    difficulty: "Intermediário",
   },
   {
     id: 6,
-    title: 'AgriTech Boost Program',
+    title: "AgriTech Boost Program",
     description:
-      'Para startups que inovam no agronegócio com tecnologia sustentável e produtividade rural',
-    category: 'AgriTech',
-    status: 'aberto',
-    icon: '🌱',
-    startDate: '2025-09-15',
-    endDate: '2026-03-15',
-    location: 'Cuiabá, MT',
+      "Para startups que inovam no agronegócio com tecnologia sustentável e produtividade rural",
+    category: "AgriTech",
+    status: "aberto",
+    icon: "🌱",
+    startDate: "2025-09-15",
+    endDate: "2026-03-15",
+    location: "Cuiabá, MT",
     participants: 25,
-    investment: 'R$ 400k',
-    duration: '6 meses',
-    difficulty: 'Intermediário',
+    investment: "R$ 400k",
+    duration: "6 meses",
+    difficulty: "Intermediário",
   },
   {
     id: 7,
-    title: 'E-commerce Acceleration',
+    title: "E-commerce Acceleration",
     description:
-      'Programa para startups de e-commerce com foco em marketplace, logística e experiência do cliente',
-    category: 'E-commerce',
-    status: 'fechado',
-    icon: '🛍️',
-    startDate: '2025-06-01',
-    endDate: '2025-11-30',
-    location: 'São Paulo, SP',
+      "Programa para startups de e-commerce com foco em marketplace, logística e experiência do cliente",
+    category: "E-commerce",
+    status: "fechado",
+    icon: "🛍️",
+    startDate: "2025-06-01",
+    endDate: "2025-11-30",
+    location: "São Paulo, SP",
     participants: 60,
-    investment: 'R$ 350k',
-    duration: '6 meses',
-    difficulty: 'Iniciante',
+    investment: "R$ 350k",
+    duration: "6 meses",
+    difficulty: "Iniciante",
   },
   {
     id: 8,
-    title: 'EduTech Innovation Lab',
+    title: "EduTech Innovation Lab",
     description:
-      'Focado em tecnologias educacionais, aprendizado online e ferramentas pedagógicas inovadoras',
-    category: 'EduTech',
-    status: 'aberto',
-    icon: '📚',
-    startDate: '2025-10-01',
-    endDate: '2026-04-01',
-    location: 'Brasília, DF',
+      "Focado em tecnologias educacionais, aprendizado online e ferramentas pedagógicas inovadoras",
+    category: "EduTech",
+    status: "aberto",
+    icon: "📚",
+    startDate: "2025-10-01",
+    endDate: "2026-04-01",
+    location: "Brasília, DF",
     participants: 35,
-    investment: 'R$ 450k',
-    duration: '6 meses',
-    difficulty: 'Intermediário',
+    investment: "R$ 450k",
+    duration: "6 meses",
+    difficulty: "Intermediário",
   },
-]
+];
 
 const categories = [
-  'Todos',
-  'Tecnologia',
-  'Impacto Social',
-  'Scale-up',
-  'Fintech',
-  'HealthTech',
-  'AgriTech',
-  'E-commerce',
-  'EduTech',
-]
-const statusOptions = ['Todos', 'aberto', 'inscrito', 'fechado']
-const difficultyOptions = ['Todos', 'Iniciante', 'Intermediário', 'Avançado']
+  "Todos",
+  "Tecnologia",
+  "Impacto Social",
+  "Scale-up",
+  "Fintech",
+  "HealthTech",
+  "AgriTech",
+  "E-commerce",
+  "EduTech",
+];
+const statusOptions = ["Todos", "aberto", "inscrito", "fechado"];
+const difficultyOptions = ["Todos", "Iniciante", "Intermediário", "Avançado"];
 
 export default function EditaisPage() {
   const [user, setUser] = useState<{ name: string; role: ProfileEnum } | null>(
-    null,
-  )
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('Todos')
-  const [selectedStatus, setSelectedStatus] = useState('Todos')
-  const [selectedDifficulty, setSelectedDifficulty] = useState('Todos')
-  const [showFilters, setShowFilters] = useState(false)
+    null
+  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [selectedStatus, setSelectedStatus] = useState("Todos");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("Todos");
+  const [showFilters, setShowFilters] = useState(false);
 
   const getUser = useCallback(async () => {
-    await userGatewayHttp.get().then(setUser)
-  }, [])
+    await userGatewayHttp.get().then(setUser);
+  }, []);
 
   useEffect(() => {
-    getUser()
-  }, [getUser])
+    getUser();
+  }, [getUser]);
 
   const filteredEditais = editaisData.filter((edital) => {
     const matchesSearch =
       edital.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      edital.description.toLowerCase().includes(searchTerm.toLowerCase())
+      edital.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === 'Todos' || edital.category === selectedCategory
+      selectedCategory === "Todos" || edital.category === selectedCategory;
     const matchesStatus =
-      selectedStatus === 'Todos' || edital.status === selectedStatus
+      selectedStatus === "Todos" || edital.status === selectedStatus;
     const matchesDifficulty =
-      selectedDifficulty === 'Todos' || edital.difficulty === selectedDifficulty
+      selectedDifficulty === "Todos" ||
+      edital.difficulty === selectedDifficulty;
 
     return (
       matchesSearch && matchesCategory && matchesStatus && matchesDifficulty
-    )
-  })
+    );
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'aberto':
+      case "aberto":
         return (
           <span className="bg-[#F4DA02] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             Aberto
           </span>
-        )
-      case 'inscrito':
+        );
+      case "inscrito":
         return (
           <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             Inscrito ✓
           </span>
-        )
-      case 'fechado':
+        );
+      case "fechado":
         return (
           <span className="bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             Fechado
           </span>
-        )
+        );
       default:
         return (
           <span className="bg-gray-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             Status
           </span>
-        )
+        );
     }
-  }
+  };
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      Tecnologia: 'bg-blue-100 text-blue-700',
-      'Impacto Social': 'bg-green-100 text-green-700',
-      'Scale-up': 'bg-purple-100 text-purple-700',
-      Fintech: 'bg-yellow-100 text-yellow-700',
-      HealthTech: 'bg-red-100 text-red-700',
-      AgriTech: 'bg-green-100 text-green-800',
-      'E-commerce': 'bg-orange-100 text-orange-700',
-      EduTech: 'bg-indigo-100 text-indigo-700',
-    }
+      Tecnologia: "bg-blue-100 text-blue-700",
+      "Impacto Social": "bg-green-100 text-green-700",
+      "Scale-up": "bg-purple-100 text-purple-700",
+      Fintech: "bg-yellow-100 text-yellow-700",
+      HealthTech: "bg-red-100 text-red-700",
+      AgriTech: "bg-green-100 text-green-800",
+      "E-commerce": "bg-orange-100 text-orange-700",
+      EduTech: "bg-indigo-100 text-indigo-700",
+    };
     return (
-      colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-700'
-    )
-  }
+      colors[category as keyof typeof colors] || "bg-gray-100 text-gray-700"
+    );
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Iniciante':
-        return 'text-green-600'
-      case 'Intermediário':
-        return 'text-yellow-600'
-      case 'Avançado':
-        return 'text-red-600'
+      case "Iniciante":
+        return "text-green-600";
+      case "Intermediário":
+        return "text-yellow-600";
+      case "Avançado":
+        return "text-red-600";
       default:
-        return 'text-gray-600'
+        return "text-gray-600";
     }
-  }
+  };
 
-  if (!user) return <Loading />
-
-  const _role = user.role
+  if (!user) return <Loading />;
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* <HomeSideBar role={role} /> */}
-      {/* <Header profile={<Profile {...user} />}/> */}
-
       <div className="p-6">
         <Card className="bg-gradient-to-r from-[#5127FF] to-[#5127FF]/80 text-white border-0 shadow-xl">
           <CardContent className="p-8">
@@ -279,7 +275,7 @@ export default function EditaisPage() {
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5" />
                     <span>
-                      {editaisData.filter((e) => e.status === 'aberto').length}{' '}
+                      {editaisData.filter((e) => e.status === "aberto").length}{" "}
                       editais abertos
                     </span>
                   </div>
@@ -314,10 +310,10 @@ export default function EditaisPage() {
               {/* Filter Toggle */}
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  {filteredEditais.length}{' '}
+                  {filteredEditais.length}{" "}
                   {filteredEditais.length === 1
-                    ? 'edital encontrado'
-                    : 'editais encontrados'}
+                    ? "edital encontrado"
+                    : "editais encontrados"}
                 </div>
                 <Button
                   variant="outline"
@@ -327,7 +323,9 @@ export default function EditaisPage() {
                   <Filter className="w-4 h-4 mr-2" />
                   Filtros
                   <ChevronDown
-                    className={`w-4 h-4 ml-2 transform transition-transform ${showFilters ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 ml-2 transform transition-transform ${
+                      showFilters ? "rotate-180" : ""
+                    }`}
                   />
                 </Button>
               </div>
@@ -371,7 +369,7 @@ export default function EditaisPage() {
                     >
                       {statusOptions.map((status) => (
                         <option key={status} value={status}>
-                          {status === 'Todos'
+                          {status === "Todos"
                             ? status
                             : status.charAt(0).toUpperCase() + status.slice(1)}
                         </option>
@@ -430,7 +428,9 @@ export default function EditaisPage() {
                       </span>
                     </div>
                     <div
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${getCategoryColor(edital.category)}`}
+                      className={`text-xs font-medium px-2 py-1 rounded-full ${getCategoryColor(
+                        edital.category
+                      )}`}
                     >
                       {edital.category}
                     </div>
@@ -493,25 +493,25 @@ export default function EditaisPage() {
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="w-4 h-4 text-[#5127FF]" />
                       <span className="font-medium">
-                        {new Date(edital.startDate).toLocaleDateString('pt-BR')}
+                        {new Date(edital.startDate).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-gray-500">até</span>
                       <span className="font-medium">
-                        {new Date(edital.endDate).toLocaleDateString('pt-BR')}
+                        {new Date(edital.endDate).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   </div>
 
                   {/* Action Button */}
-                  {edital.status === 'aberto' && (
+                  {edital.status === "aberto" && (
                     <Button className="w-full bg-gradient-to-r from-[#5127FF] to-[#5127FF]/90 hover:from-[#5127FF]/90 hover:to-[#5127FF] text-white font-semibold py-3 rounded-xl transition-all duration-300 transform group-hover:scale-105 shadow-md hover:shadow-lg">
                       Inscrever-se
                     </Button>
                   )}
 
-                  {edital.status === 'inscrito' && (
+                  {edital.status === "inscrito" && (
                     <div className="text-center py-2">
                       <span className="text-green-600 font-semibold text-sm bg-green-50 px-4 py-2 rounded-lg">
                         Você já está inscrito nesse edital
@@ -519,7 +519,7 @@ export default function EditaisPage() {
                     </div>
                   )}
 
-                  {edital.status === 'fechado' && (
+                  {edital.status === "fechado" && (
                     <div className="text-center py-2">
                       <span className="text-gray-500 font-semibold text-sm bg-gray-50 px-4 py-2 rounded-lg">
                         Inscrições encerradas
@@ -547,10 +547,10 @@ export default function EditaisPage() {
               </p>
               <Button
                 onClick={() => {
-                  setSearchTerm('')
-                  setSelectedCategory('Todos')
-                  setSelectedStatus('Todos')
-                  setSelectedDifficulty('Todos')
+                  setSearchTerm("");
+                  setSelectedCategory("Todos");
+                  setSelectedStatus("Todos");
+                  setSelectedDifficulty("Todos");
                 }}
                 className="bg-[#5127FF] hover:bg-[#5127FF]/90 text-white"
               >
@@ -563,5 +563,5 @@ export default function EditaisPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
