@@ -1,4 +1,11 @@
-import { Calendar, ChevronRight, FileText, Home, Inbox } from 'lucide-react'
+import {
+  Calendar,
+  ChevronRight,
+  FileText,
+  Home,
+  Inbox,
+  Users,
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -38,6 +45,11 @@ const items = [
     url: '#',
     icon: Calendar,
   },
+  {
+    title: 'Gerenciar',
+    url: '/adm/gerenciar',
+    icon: Users,
+  },
 ]
 
 export async function AdminSidebar() {
@@ -59,6 +71,7 @@ export async function AdminSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navegação do Administrador</SidebarGroupLabel>
@@ -72,12 +85,17 @@ export async function AdminSidebar() {
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
+
                   {item.title === 'Notificações' && (
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   )}
 
                   {item.title === 'Certificados Emitidos' && (
-                    <SidebarMenuBadge>24</SidebarMenuBadge>
+                    <SidebarMenuBadge>12</SidebarMenuBadge>
+                  )}
+
+                  {item.title === 'Gerenciar Usuários' && (
+                    <SidebarMenuBadge>8</SidebarMenuBadge>
                   )}
                 </SidebarMenuItem>
               ))}
@@ -97,6 +115,7 @@ export async function AdminSidebar() {
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
+
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
@@ -108,6 +127,7 @@ export async function AdminSidebar() {
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 </CollapsibleContent>
+
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>

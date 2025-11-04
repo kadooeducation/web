@@ -3,9 +3,7 @@ import { Suspense } from "react";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
 import { EnrollmentOverview } from "./enrollment-overview";
-import { HighlightMentors } from "./highlight-mentors";
 import { WelcomeBanner } from "./welcome-banner";
-
 
 export async function HomeSection() {
   return (

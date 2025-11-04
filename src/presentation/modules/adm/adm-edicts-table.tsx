@@ -1,30 +1,32 @@
 "use client";
 
-import { Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
-import { kyClient } from "@/infra/external/http/ky-client/api";
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type FilterFn,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type Row,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from "@tanstack/react-table";
+import { format, parse } from "date-fns";
+import { EllipsisIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/presentation/external/components/ui/button";
-import { Card } from "@/presentation/external/components/ui/card";
+import { Checkbox } from "@/presentation/external/components/ui/checkbox";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/presentation/external/components/ui/dialog";
-import { Input } from "@/presentation/external/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/presentation/external/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/presentation/external/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -33,205 +35,251 @@ import {
   TableHeader,
   TableRow,
 } from "@/presentation/external/components/ui/table";
-import { formatDate } from "@/shared/functions/format-date";
 
-export const statusColorMap: Record<string, string> = {
-  Aberto: "bg-green-100 text-green-700",
-  Encerrado: "bg-red-100 text-red-700",
-  "Em breve": "bg-yellow-100 text-yellow-700",
+type Edict = {
+  id: number;
+  title: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  organizer: string;
+  status: string; // "ABERTO" | "ENCERRADO" | "EM BREVE"
+  categories: string[];
 };
 
-interface AdmEdictsTableProps {
-  edicts: {
-    id: number;
-    status: string;
-    categories: string[];
-    title: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-  }[];
-}
+// --- Helper de data (date-fns puro, sem T00 e sem toLocale) ---
+const fmtBR = (d: string) =>
+  format(parse(d, "yyyy-MM-dd", new Date()), "dd/MM/yyyy");
 
-export function AdmEdictsTable({ edicts }: AdmEdictsTableProps) {
-  const [isLoading, setIsLoading] = useState(false);
+// --- Filtro multi-coluna igual ao da Tabela 1 ---
+const multiColumnFilterFn: FilterFn<Edict> = (row, _columnId, filterValue) => {
+  const e = row.original;
+  const searchable = [
+    e.title,
+    e.organizer,
+    e.status,
+    e.categories?.join(" "),
+    fmtBR(e.startDate.toString()),
+    fmtBR(e.endDate.toString()),
+  ]
+    .join(" ")
+    .toLowerCase();
 
-  async function handleDelete(id: number) {
-    setIsLoading(true);
+  const query = String(filterValue ?? "").toLowerCase();
+  return searchable.includes(query);
+};
 
-    await kyClient
-      .delete(`edict/${id}`)
-      .then(() => {
-        toast.success("Edital deletado com sucesso.");
-      })
-      .catch(() => {
-        toast.error("Erro ao deletar o edital.");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
+// --- Colunas seguindo o layout da Tabela 1 ---
+const columns: ColumnDef<Edict>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
+        aria-label="Selecionar todos"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(v) => row.toggleSelected(!!v)}
+        aria-label="Selecionar linha"
+      />
+    ),
+    size: 28,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    header: "Título",
+    accessorKey: "title",
+    cell: ({ row }) => (
+      <div className="font-medium truncate">
+        {row.getValue("title") as string}
+      </div>
+    ),
+    size: 320,
+    filterFn: multiColumnFilterFn,
+    enableHiding: false,
+    enableSorting: false,
+  },
+  {
+    header: "Organizador",
+    accessorKey: "organizer",
+    cell: ({ row }) => (
+      <div className="text-muted-foreground truncate">
+        {row.getValue("organizer") as string}
+      </div>
+    ),
+    size: 240,
+    filterFn: multiColumnFilterFn,
+    enableSorting: false,
+  },
+  {
+    id: "period",
+    header: "Período",
+    accessorFn: (e) => `${e.startDate}|${e.endDate}`,
+    cell: ({ row }) => {
+      const e = row.original;
+      return (
+        <div className="tabular-nums">
+          {fmtBR(e.startDate.toString())}{" "}
+          <span className="mx-1 text-gray-400">até</span>{" "}
+          {fmtBR(e.endDate.toString())}
+        </div>
+      );
+    },
+    size: 220,
+    enableSorting: false,
+  },
+  {
+    id: "status",
+    header: "Status",
+    accessorFn: (e) => e.status,
+    cell: ({ row }) => {
+      const status = String(row.getValue("status") ?? "").toUpperCase();
+      const color =
+        status === "ABERTO"
+          ? "bg-green-100 text-green-700"
+          : status === "ENCERRADO"
+          ? "bg-red-100 text-red-700"
+          : "bg-yellow-100 text-yellow-700";
+      const label = status.charAt(0) + status.slice(1).toLowerCase();
+      return (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${color}`}
+        >
+          {label}
+        </span>
+      );
+    },
+    size: 140,
+    enableSorting: false,
+  },
+  {
+    id: "actions",
+    header: () => <span className="sr-only">Ações</span>,
+    cell: ({ row }) => <RowActions row={row} />,
+    size: 60,
+    enableHiding: false,
+    enableSorting: false,
+  },
+];
+
+export function KadooEdictsTable({ edicts }: { edicts: Edict[] }) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [data, setData] = useState<Edict[]>([]);
+
+  useEffect(() => {
+    setData(edicts);
+  }, [edicts]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: { sorting, pagination, columnFilters, columnVisibility },
+  });
 
   return (
-    <Dialog>
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Gerenciamento de Editais</h1>
-            <p className="text-gray-600">
-              Busque, filtre e gerencie os editais
-            </p>
-          </div>
-          <Button asChild className="bg-[#5127FF] hover:bg-[#5127FF]/90">
-            <Link href="/adm/criar-edital" className="text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Criar edital
-            </Link>
+    <div className="space-y-4">
+      <div className="overflow-hidden rounded-md border bg-background">
+        <Table className="table-fixed">
+          <TableHeader>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id} className="hover:bg-transparent">
+                {hg.headers.map((h) => (
+                  <TableHead
+                    key={h.id}
+                    style={{ width: `${h.getSize()}px` }}
+                    className="h-11 select-none"
+                  >
+                    {flexRender(h.column.columnDef.header, h.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="last:py-0">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Sem resultados.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+function RowActions({ row }: { row: Row<Edict> }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <div className="flex justify-end">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="shadow-none"
+            aria-label="Ações"
+          >
+            <EllipsisIcon size={16} aria-hidden="true" />
           </Button>
         </div>
-
-        <Card className="p-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex gap-2 items-center w-full md:w-1/2">
-              <div className="relative w-full">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <Input
-                  placeholder="Buscar por título, descrição ou categoria..."
-                  className="pl-9"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 w-full md:w-auto">
-              <Select>
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Em andamento">Em andamento</SelectItem>
-                  <SelectItem value="Finalizado">Finalizado</SelectItem>
-                  <SelectItem value="Fechado">Fechado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead>Título</TableHead>
-                <TableHead>Período</TableHead>
-                <TableHead>Status</TableHead>
-                {/* <TableHead>Gerenciar Etapas</TableHead> */}
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {edicts?.map((e) => (
-                <TableRow key={e.id} className="hover:bg-gray-50">
-                  <TableCell className="font-medium">{e.title}</TableCell>
-                  <TableCell>
-                    <span className="text-sm text-gray-700">
-                      {formatDate(e.startDate)}
-                    </span>
-                    <span className="mx-1 text-gray-400">até</span>
-                    <span className="text-sm text-gray-700">
-                      {formatDate(e.endDate)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        statusColorMap[e.status]
-                      }`}
-                    >
-                      {e.status}
-                    </span>
-                  </TableCell>
-                  {/* <TableCell>
-                    <Link href={""} className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColorMap[e.status]}`}>
-                      Gerenciar etapas
-                    </Link>
-                  </TableCell> */}
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/adm/editais/editar/${e.id}`}>
-                          <Pencil className="w-4 h-4 mr-1" /> Editar
-                        </Link>
-                      </Button>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="bg-red-500"
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" /> Excluir
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="sm:max-w-[400px]">
-                        <DialogHeader>
-                          <DialogTitle>Deletar edital</DialogTitle>
-                          <DialogDescription>
-                            Tem certeza que deseja deletar este edital? Essa
-                            ação não pode ser desfeita.
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button variant="outline">Cancelar</Button>
-                          </DialogClose>
-                          <Button
-                            variant="destructive"
-                            onClick={() => handleDelete(e.id)}
-                          >
-                            {isLoading ? "Deletando" : "Deletar"}
-                            {isLoading && <Loader2 />}
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-
-              {/* {pageItems.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="py-10 text-center text-sm text-gray-600">
-                    Nenhum edital encontrado.
-                  </TableCell>
-                </TableRow>
-              )} */}
-            </TableBody>
-          </Table>
-        </Card>
-
-        {/* <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Mostrando {pageItems.length} de {filtered.length} resultados
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Próximo
-            </Button>
-          </div>
-        </div> */}
-      </div>
-    </Dialog>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <span>Editar</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <span>Duplicar</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <span>Excluir</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

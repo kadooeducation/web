@@ -16,7 +16,7 @@ export async function EnrollmentOverview() {
       endDate: Date;
       categories: string[];
     }[]
-  >("user-edict");
+  >("user-edicts");
 
   console.log(edicts);
   // const edicts = await edictGatewayHttp.edictsAttachUser();

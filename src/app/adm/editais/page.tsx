@@ -1,5 +1,5 @@
 import { kyClient } from '@/infra/external/http/ky-client/api'
-import { AdmEdictsTable } from '@/presentation/modules/adm/adm-edicts-table'
+import { KadooEdictsTable } from '@/presentation/modules/adm/adm-edicts-table'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,10 +12,13 @@ export default async function AdminEdictsPage() {
         categories: string[]
         title: string
         description: string
+        organizer: string
         startDate: Date
         endDate: Date
       }[]
     >('edict')
 
-  return <AdmEdictsTable edicts={edicts} />
+    console.log(edicts)
+
+  return <KadooEdictsTable edicts={edicts} />
 }
