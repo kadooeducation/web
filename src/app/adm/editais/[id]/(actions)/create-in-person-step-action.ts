@@ -11,6 +11,7 @@ export async function createInPersonStepAction(
     modality: "Presencial";
     address: string;
     description: string;
+    time: string;
   }
 ) {
   await kyClient.post(`event/in-person`, {
@@ -20,6 +21,7 @@ export async function createInPersonStepAction(
     address: input.address,
     format: "Evento",
     description: input.description,
+    time: input.time,
     edictId,
   });
 

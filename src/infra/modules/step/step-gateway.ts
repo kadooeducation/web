@@ -6,6 +6,8 @@ export interface Step {
   status: string
   event: Event
   kind: string
+  time: string
+  disable: boolean
   activity?: {
     dueDate: Date
     file: string

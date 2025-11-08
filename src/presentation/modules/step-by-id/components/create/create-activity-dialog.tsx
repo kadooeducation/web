@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ptBR } from 'date-fns/locale'
-import { Calendar as CalIcon, Clock3 } from 'lucide-react'
-import { type PropsWithChildren, startTransition } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { createActivityStepAction } from '@/app/adm/editais/[id]/(actions)/create-activity-step-action'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ptBR } from "date-fns/locale";
+import { Calendar as CalIcon, Clock, Clock3 } from "lucide-react";
+import { type PropsWithChildren, startTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { createActivityStepAction } from "@/app/adm/editais/[id]/(actions)/create-activity-step-action";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Calendar as CalendarShad } from "@/presentation/external/components/ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -19,38 +19,44 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/presentation/external/components/ui/dialog'
-import { Input as ShadInput } from '@/presentation/external/components/ui/input'
+} from "@/presentation/external/components/ui/dialog";
+import {
+  Input,
+  Input as ShadInput,
+} from "@/presentation/external/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/presentation/external/components/ui/popover'
-import { Textarea } from '@/presentation/external/components/ui/textarea'
-import { cn } from '@/presentation/external/lib/utils'
-import { uploadFile } from '@/presentation/modules/edict/create/components/form/form'
+} from "@/presentation/external/components/ui/popover";
+import { Textarea } from "@/presentation/external/components/ui/textarea";
+import { cn } from "@/presentation/external/lib/utils";
+import { uploadFile } from "@/presentation/modules/edict/create/components/form/form";
+import { Label } from "@/presentation/shared/components";
 
-const MAX_PDF_BYTES = 5 * 1024 * 1024 // 5MB
+const MAX_PDF_BYTES = 5 * 1024 * 1024;
 
 const schema = z.object({
-  title: z.string().min(1, 'Informe o título.'),
+  title: z.string().min(1, "Informe o título."),
   date: z.date(),
+  deliveryTime: z.string(),
   dueDate: z.date(),
+  time: z.string(),
   file: z
     .custom<File>()
     .nullable()
-    .refine((f) => !f || f.type === 'application/pdf', 'Envie um PDF.')
+    .refine((f) => !f || f.type === "application/pdf", "Envie um PDF.")
     .refine(
       (f) => !f || f.size <= MAX_PDF_BYTES,
-      'PDF deve ter no máximo 5MB.',
+      "PDF deve ter no máximo 5MB."
     ),
-  description: z.string().min(1, 'Descreva a atividade.'),
-})
+  description: z.string().min(1, "Descreva a atividade."),
+});
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
 
 interface CreateActivityDialogProps extends PropsWithChildren {
-  edictId: number
+  edictId: number;
 }
 
 export function CreateActivityDialog({
@@ -67,20 +73,21 @@ export function CreateActivityDialog({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: '',
+      title: "",
       date: undefined,
       dueDate: undefined,
       file: null,
-      description: '',
+      description: "",
+      deliveryTime: "",
     },
-  })
+  });
 
   async function onSubmit(data: FormData) {
-    if (!data.file) return
+    if (!data.file) return;
 
     const { url: edictUrl } = await uploadFile<{ url: string; error: boolean }>(
-      data.file,
-    )
+      data.file
+    );
 
     startTransition(async () => {
       await createActivityStepAction(edictId, {
@@ -88,16 +95,16 @@ export function CreateActivityDialog({
         file: edictUrl,
         date: new Date(data.date),
       }).then(() => {
-        toast.success(`Etapa ${data.title} criada com sucesso!`)
-        reset()
-      })
-    })
+        toast.success(`Etapa ${data.title} criada com sucesso!`);
+        reset();
+      });
+    });
   }
 
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) reset()
+        if (!open) reset();
       }}
     >
       <DialogContent className="sm:max-w-[560px]">
@@ -113,7 +120,7 @@ export function CreateActivityDialog({
             <span className="text-sm font-medium">Título *</span>
             <ShadInput
               placeholder="Ex: Entrega do Canvas"
-              {...register('title')}
+              {...register("title")}
             />
             {errors.title && (
               <span className="text-xs text-red-500">
@@ -135,14 +142,14 @@ export function CreateActivityDialog({
                         type="button"
                         variant="outline"
                         className={cn(
-                          'w-full justify-start',
-                          !field.value && 'text-muted-foreground',
+                          "w-full justify-start",
+                          !field.value && "text-muted-foreground"
                         )}
                       >
                         <CalIcon className="mr-2 h-4 w-4" />
                         {field.value
-                          ? field.value.toLocaleDateString('pt-BR')
-                          : 'Selecionar'}
+                          ? field.value.toLocaleDateString("pt-BR")
+                          : "Selecionar"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="p-0">
@@ -176,14 +183,14 @@ export function CreateActivityDialog({
                         type="button"
                         variant="outline"
                         className={cn(
-                          'w-full justify-start',
-                          !field.value && 'text-muted-foreground',
+                          "w-full justify-start",
+                          !field.value && "text-muted-foreground"
                         )}
                       >
                         <Clock3 className="mr-2 h-4 w-4" />
                         {field.value
-                          ? field.value.toLocaleDateString('pt-BR')
-                          : 'Selecionar'}
+                          ? field.value.toLocaleDateString("pt-BR")
+                          : "Selecionar"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="p-0">
@@ -206,13 +213,32 @@ export function CreateActivityDialog({
             </label>
           </div>
 
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="time-picker">Horário do Evento *</Label>
+
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-gray-400" />
+              <Input
+                type="time"
+                id="time-picker"
+                defaultValue="10:30"
+                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+              />
+            </div>
+            {errors.deliveryTime && (
+              <span className="text-xs text-red-500">
+                {errors.deliveryTime.message}
+              </span>
+            )}
+          </div>
+
           <label className="grid gap-1" htmlFor="file">
             <span className="text-sm font-medium">Anexo (PDF)</span>
             <ShadInput
               type="file"
               accept="application/pdf"
               onChange={(e) =>
-                setValue('file', e.target.files?.[0] ?? null, {
+                setValue("file", e.target.files?.[0] ?? null, {
                   shouldValidate: true,
                 })
               }
@@ -229,7 +255,7 @@ export function CreateActivityDialog({
             <Textarea
               rows={4}
               placeholder="Detalhes da atividade"
-              {...register('description')}
+              {...register("description")}
             />
             {errors.description && (
               <span className="text-xs text-red-500">
@@ -244,7 +270,7 @@ export function CreateActivityDialog({
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Adicionando...' : 'Adicionar Atividade'}
+              {isSubmitting ? "Adicionando..." : "Adicionar Atividade"}
             </Button>
             <DialogClose asChild>
               <Button variant="ghost" type="button">
@@ -257,5 +283,5 @@ export function CreateActivityDialog({
 
       <DialogTrigger asChild>{children}</DialogTrigger>
     </Dialog>
-  )
+  );
 }

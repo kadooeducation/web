@@ -16,10 +16,21 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { format, parse } from "date-fns";
-import { EllipsisIcon } from "lucide-react";
+import { EllipsisIcon, Plus } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { deleteEdictAction } from "@/app/adm/editais/actions";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Checkbox } from "@/presentation/external/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/presentation/external/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +46,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/presentation/external/components/ui/table";
-import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/presentation/external/components/ui/dialog";
-import { deleteEdictAction } from "@/app/adm/editais/actions";
 
 type Edict = {
   id: number;
@@ -46,7 +54,7 @@ type Edict = {
   startDate: Date;
   endDate: Date;
   organizer: string;
-  status: string; 
+  status: string;
   categories: string[];
 };
 
@@ -200,7 +208,13 @@ export function KadooEdictsTable({ edicts }: { edicts: Edict[] }) {
   });
 
   return (
-    <div className="space-y-4 mt-12">
+    <div className="space-y-4 mt-12 flex flex-col">
+      <Link href="/adm/criar-edital" className="self-end">
+        <Button>
+          <Plus />
+          Criar Edital
+        </Button>
+      </Link>
       <div className="overflow-hidden rounded-md border bg-background">
         <Table className="table-fixed">
           <TableHeader>
@@ -281,9 +295,6 @@ export function RowActions({ row }: { row: Row<Edict> }) {
               onClick={() => push(`/adm/editais/editar/${edictId}`)}
             >
               <span>Editar</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <span>Duplicar</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"

@@ -13,7 +13,7 @@ export function BackToSteps() {
       onClick={back}
     >
       <ArrowLeft className="w-4 h-4" />
-      Voltar para trilhas
+      Voltar para etapas
     </Button>
   )
 }

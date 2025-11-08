@@ -1,89 +1,98 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: usado em tipagem externa sem controle */
-'use client'
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
   Calendar,
-  CheckCircle2,
   ChevronDown,
   CircleDashed,
   Clock3,
   Info,
   MapPin,
   Video,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useMemo, useState } from 'react'
-import type { Step } from '@/infra/modules/step/step-gateway'
-import { Card, CardContent } from '@/presentation/external/components/ui/card'
+} from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import type { Step } from "@/infra/modules/step/step-gateway";
+import { Card, CardContent } from "@/presentation/external/components/ui/card";
+import { formatDate } from "@/shared/functions/format-date";
+import { formatTime } from "@/shared/functions/format-time";
 
-const DUO_GREEN_DARK = '#2B8A00'
-const SOFT_SKY = '#E8F7FF'
-const SOFT_MINT = '#EFFFF2'
+const DUO_GREEN_DARK = "#2B8A00";
+const SOFT_SKY = "#E8F7FF";
+const SOFT_MINT = "#EFFFF2";
 
-function StatusPill({ status }: { status: Step['status'] }) {
+function StatusPill({
+  disable,
+}: {
+  disable: boolean;
+}) {
   const variants = {
     concluida: {
-      label: 'Concluída',
+      label: "Concluída",
       className:
-        'bg-[rgba(88,204,2,0.12)] text-[#2B8A00] ring-1 ring-[rgba(88,204,2,0.28)]',
+        "bg-[rgba(88,204,2,0.12)] text-[#2B8A00] ring-1 ring-[rgba(88,204,2,0.28)]",
     },
     em_andamento: {
-      label: 'Em andamento',
+      label: "Em andamento",
       className:
-        'bg-[rgba(255,212,59,0.18)] text-[#8A6A00] ring-1 ring-[rgba(255,212,59,0.35)]',
+        "bg-[rgba(255,212,59,0.18)] text-[#8A6A00] ring-1 ring-[rgba(255,212,59,0.35)]",
     },
     pendente: {
-      label: 'Pendente',
+      label: "Pendente",
       className:
-        'bg-[rgba(0,0,0,0.05)] text-[#5B5B5B] ring-1 ring-[rgba(0,0,0,0.08)]',
+        "bg-[rgba(0,0,0,0.05)] text-[#5B5B5B] ring-1 ring-[rgba(0,0,0,0.08)]",
     },
-  } as const
+    em_breve: {
+      label: "Em breve",
+      className:
+        "bg-[rgba(0,0,0,0.05)] text-[#5B5B5B] ring-1 ring-[rgba(0,0,0,0.08)]",
+    },
+  } as const;
 
-  const key =
-    (['concluida', 'em_andamento', 'pendente'] as const).find(
-      (s) => s === status,
-    ) ?? 'pendente'
+
+   const key = disable ? "em_breve" : "em_andamento";
 
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${variants[key].className}`}
     >
-      {key === 'concluida' ? (
-        <CheckCircle2 className="h-3.5 w-3.5" />
-      ) : key === 'em_andamento' ? (
+      {key === "em_andamento" ? (
         <Clock3 className="h-3.5 w-3.5" />
       ) : (
         <CircleDashed className="h-3.5 w-3.5" />
       )}
       {variants[key].label}
     </span>
-  )
+  );
 }
 
-function KindIcon({ kind }: { kind: Step['kind'] }) {
-  return kind === 'activity' ? (
+function KindIcon({ kind }: { kind: Step["kind"] }) {
+  return kind === "activity" ? (
     <BookOpen className="h-4 w-4" />
   ) : (
     <Calendar className="h-4 w-4" />
-  )
+  );
 }
 interface StepsSectionProps {
-  steps: Step[]
+  steps: Step[];
 }
 
+
 export function StepsSection({ steps }: StepsSectionProps) {
-  const [openId, setOpenId] = useState<number | null>(null)
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const ordered = useMemo(
     () =>
       [...steps].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
       ),
-    [steps],
-  )
+    [steps]
+  );
+
+  console.log(steps)
 
   return (
     <div className="relative">
@@ -100,14 +109,14 @@ export function StepsSection({ steps }: StepsSectionProps) {
 
       <div className="space-y-4">
         {ordered.map((step, index) => {
-          const isOpen = openId === step.id
+          const isOpen = openId === step.id;
 
-          // sem alterar tipos: lemos dados de event como any
-          const eventData = (step.event as any) ?? {}
-          const isEvento = eventData?.format === 'Evento'
-          const mode = eventData?.mode as 'presencial' | 'online' | undefined
-          const address = eventData?.address as string | undefined
-          const meetingLink = eventData?.meetingLink as string | undefined
+          const eventData = (step.event as any) ?? {};
+          const isEvento = eventData?.format === "Evento";
+          const mode = eventData?.mode as "presencial" | "online" | undefined;
+          const address = eventData?.address as string | undefined;
+          const meetingLink = eventData?.meetingLink as string | undefined;
+          const isDisabled = step.disable;
 
           return (
             <motion.div
@@ -117,30 +126,36 @@ export function StepsSection({ steps }: StepsSectionProps) {
               transition={{ delay: index * 0.04, duration: 0.3 }}
               className="relative"
             >
-              <Card className="w-full overflow-hidden rounded-2xl border border-[rgba(0,0,0,0.06)] shadow-sm transition-all hover:shadow-md focus-within:shadow-md bg-white">
+              <Card
+                className={`w-full overflow-hidden rounded-2xl border border-[rgba(0,0,0,0.06)] shadow-sm transition-all bg-white
+        ${
+          isDisabled
+            ? "opacity-60 saturate-50 cursor-not-allowed"
+            : "hover:shadow-md focus-within:shadow-md"
+        }`}
+              >
                 <CardContent className="px-5 py-4">
                   <div className="flex flex-col gap-3">
-                    {/* topo: título + ações */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <div className="mb-1 inline-flex items-center gap-1.5 text-[13px] font-medium text-[rgb(70,70,70)]">
                           <span
                             className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[rgba(88,204,2,0.12)] text-[rgb(40,40,40)]"
                             title={
-                              step.kind === 'activity' ? 'Atividade' : 'Evento'
+                              step.kind === "activity" ? "Atividade" : "Evento"
                             }
                           >
                             <KindIcon kind={step.kind} />
                           </span>
                           <span className="truncate">
-                            {step.kind === 'activity' ? 'Atividade' : 'Evento'}
+                            {step.kind === "activity" ? "Atividade" : "Evento"}
                           </span>
                         </div>
 
                         <Link
                           href={`/etapa/${step.id}`}
                           className="block max-w-full text-balance text-lg font-semibold leading-snug text-[rgb(34,34,34)] hover:text-[rgb(20,20,20)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                          style={{ color: '#1f2937' }}
+                          style={{ color: "#1f2937" }}
                         >
                           {step.title}
                         </Link>
@@ -153,7 +168,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                       </div>
 
                       <div className="flex shrink-0 items-center gap-2">
-                        <StatusPill status={step.status} />
+                        <StatusPill disable={step.disable} />
 
                         <button
                           type="button"
@@ -161,7 +176,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                           aria-controls={`stage-panel-${step.id}`}
                           onClick={() =>
                             setOpenId((prev) =>
-                              prev === step.id ? null : step.id,
+                              prev === step.id ? null : step.id
                             )
                           }
                           className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-white outline-none transition-all hover:bg-[rgba(0,0,0,0.02)] focus-visible:ring-2 focus-visible:ring-[rgba(88,204,2,0.45)]"
@@ -169,7 +184,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                           <motion.span
                             animate={{ rotate: isOpen ? 180 : 0 }}
                             transition={{
-                              type: 'spring',
+                              type: "spring",
                               stiffness: 300,
                               damping: 20,
                             }}
@@ -183,32 +198,28 @@ export function StepsSection({ steps }: StepsSectionProps) {
                       </div>
                     </div>
 
-                    {/* meta + CTA */}
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex flex-wrap items-center gap-2 text-sm text-[rgb(95,95,95)]">
                         <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(0,0,0,0.04)] px-2.5 py-1">
                           <Calendar className="h-3.5 w-3.5" />
                           <span>
-                            {step.date
-                              ? new Date(step.date).toLocaleDateString(
-                                  'pt-BR',
-                                  {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: 'numeric',
-                                  },
-                                )
-                              : 'Sem data'}
+                            {step.date ? formatDate(step.date) : "Sem data"}
                           </span>
                         </span>
+                        {step.time && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(0,0,0,0.04)] px-2.5 py-1">
+                            <Clock3 className="h-3.5 w-3.5" />
+                            <span>{formatTime(step.time)}</span>
+                          </span>
+                        )}
 
-                        {step.kind === 'activity' && step.activity?.dueDate && (
+                        {step.kind === "activity" && step.activity?.dueDate && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(255,212,59,0.2)] px-2.5 py-1 text-[rgb(85,70,0)]">
                             <Clock3 className="h-3.5 w-3.5" />
-                            entrega:{' '}
+                            entrega:{" "}
                             {new Date(step.activity.dueDate).toLocaleDateString(
-                              'pt-BR',
-                              { day: '2-digit', month: 'short' },
+                              "pt-BR",
+                              { day: "2-digit", month: "short" }
                             )}
                           </span>
                         )}
@@ -226,15 +237,14 @@ export function StepsSection({ steps }: StepsSectionProps) {
                       </Link>
                     </div>
 
-                    {/* painel expansível */}
                     <AnimatePresence initial={false}>
                       {isOpen && (
                         <motion.div
                           id={`stage-panel-${step.id}`}
                           initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
+                          animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.26, ease: 'easeInOut' }}
+                          transition={{ duration: 0.26, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
                           <div className="mt-3 rounded-xl border border-[rgba(0,0,0,0.06)] bg-white">
@@ -246,7 +256,6 @@ export function StepsSection({ steps }: StepsSectionProps) {
                             </div>
 
                             <div className="grid gap-3 p-4 text-sm">
-                              {/* bloco evento */}
                               {isEvento && (
                                 <div className="grid gap-2">
                                   {mode && (
@@ -259,7 +268,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                                     </div>
                                   )}
 
-                                  {mode === 'presencial' && address && (
+                                  {mode === "presencial" && address && (
                                     <div className="inline-flex items-center gap-2 rounded-lg bg-[rgba(0,0,0,0.04)] px-3 py-2">
                                       <MapPin className="h-4 w-4" />
                                       <span className="font-medium">
@@ -269,7 +278,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                                     </div>
                                   )}
 
-                                  {mode === 'online' && meetingLink && (
+                                  {mode === "online" && meetingLink && (
                                     <div className="inline-flex items-center gap-2 rounded-lg bg-[rgba(0,0,0,0.04)] px-3 py-2">
                                       <Video className="h-4 w-4" />
                                       <span className="font-medium">Link:</span>
@@ -286,8 +295,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                                 </div>
                               )}
 
-                              {/* bloco atividade */}
-                              {step.kind === 'activity' && (
+                              {step.kind === "activity" && (
                                 <div
                                   className="rounded-lg p-3"
                                   style={{ background: SOFT_SKY }}
@@ -298,20 +306,20 @@ export function StepsSection({ steps }: StepsSectionProps) {
                                   <ul className="grid gap-1.5 text-[13px] text-[rgb(85,85,85)]">
                                     <li className="flex items-center gap-2">
                                       <Clock3 className="h-3.5 w-3.5" />
-                                      Prazo:{' '}
+                                      Prazo:{" "}
                                       {step.activity?.dueDate
                                         ? new Date(
-                                            step.activity.dueDate,
-                                          ).toLocaleDateString('pt-BR', {
-                                            day: '2-digit',
-                                            month: 'short',
-                                            year: 'numeric',
+                                            step.activity.dueDate
+                                          ).toLocaleDateString("pt-BR", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
                                           })
-                                        : '—'}
+                                        : "—"}
                                     </li>
                                     <li className="flex items-center gap-2">
                                       <BookOpen className="h-3.5 w-3.5" />
-                                      Arquivo:{' '}
+                                      Arquivo:{" "}
                                       {step.activity?.file ? (
                                         <a
                                           className="underline decoration-dotted underline-offset-2 hover:opacity-90"
@@ -322,7 +330,7 @@ export function StepsSection({ steps }: StepsSectionProps) {
                                           abrir
                                         </a>
                                       ) : (
-                                        '—'
+                                        "—"
                                       )}
                                     </li>
                                   </ul>
@@ -337,9 +345,9 @@ export function StepsSection({ steps }: StepsSectionProps) {
                 </CardContent>
               </Card>
             </motion.div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

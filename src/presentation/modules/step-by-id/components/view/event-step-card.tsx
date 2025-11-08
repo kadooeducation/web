@@ -1,26 +1,27 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: usado em tipagem externa sem controle */
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Calendar as CalIcon,
+  Clock,
   Footprints,
   Link2,
   Loader2,
   MapPin,
-} from 'lucide-react'
-import { useState, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { deleteEventAction } from '@/app/adm/editais/[id]/(actions)/delete-event-action'
-import { Button } from '@/presentation/external/components/ui/button'
+} from "lucide-react";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { deleteEventAction } from "@/app/adm/editais/[id]/(actions)/delete-event-action";
+import { Button } from "@/presentation/external/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/presentation/external/components/ui/card'
+} from "@/presentation/external/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -30,13 +31,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/presentation/external/components/ui/dialog'
-import { Input } from '@/presentation/external/components/ui/input'
-import { Separator } from '@/presentation/external/components/ui/separator'
-import { Label } from '@/presentation/shared/components'
+} from "@/presentation/external/components/ui/dialog";
+import { Input } from "@/presentation/external/components/ui/input";
+import { Separator } from "@/presentation/external/components/ui/separator";
+import { Label } from "@/presentation/shared/components";
+import { formatTime } from "@/shared/functions/format-time";
 
 const fmtDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString('pt-BR') : '-'
+  iso ? new Date(iso).toLocaleDateString("pt-BR") : "-";
 
 const fmtMode = (s?: string | null) =>
   s
@@ -44,50 +46,50 @@ const fmtMode = (s?: string | null) =>
         .toString()
         .toLowerCase()
         .replace(/^\w/, (c) => c.toUpperCase())
-    : '-'
+    : "-";
 
 const stepPill = (step: any) => {
-  if (step.kind === 'event') {
-    const isOnline = step.event?.type === 'online'
+  if (step.kind === "event") {
+    const isOnline = step.event?.type === "online";
     return {
       icon: isOnline ? Link2 : MapPin,
-      text: `Evento ${isOnline ? 'Online' : 'Presencial'}`,
-    }
+      text: `Evento ${isOnline ? "Online" : "Presencial"}`,
+    };
   }
-  return { icon: Footprints, text: 'Atividade' }
-}
+  return { icon: Footprints, text: "Atividade" };
+};
 
 function isoToDateInput(iso?: string) {
-  if (!iso) return ''
-  const d = new Date(iso)
-  const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
+  if (!iso) return "";
+  const d = new Date(iso);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 const baseSchema = z.object({
-  title: z.string().min(1, 'Informe o título.'),
+  title: z.string().min(1, "Informe o título."),
   date: z.string().optional(),
-})
+});
 
 const onlineSchema = baseSchema.extend({
-  meetingLink: z.url('Link inválido').min(1, 'Informe o link da reunião.'),
-})
+  meetingLink: z.url("Link inválido").min(1, "Informe o link da reunião."),
+});
 
 const inPersonSchema = baseSchema.extend({
-  address: z.string().min(1, 'Informe o endereço.'),
-})
+  address: z.string().min(1, "Informe o endereço."),
+});
 
 export function EventStepCard({ step }: any) {
-  const [isPending, startTransition] = useTransition()
-  const [openEdit, setOpenEdit] = useState(false)
+  const [isPending, startTransition] = useTransition();
+  const [openEdit, setOpenEdit] = useState(false);
 
-  const pill = stepPill(step)
-  const PillIcon = pill.icon
+  const pill = stepPill(step);
+  const PillIcon = pill.icon;
 
-  const isOnline = step.event?.type === 'online'
-  const schema = isOnline ? onlineSchema : inPersonSchema
+  const isOnline = step.event?.type === "online";
+  const schema = isOnline ? onlineSchema : inPersonSchema;
 
   const {
     register,
@@ -97,23 +99,23 @@ export function EventStepCard({ step }: any) {
     resolver: zodResolver(schema),
     defaultValues: isOnline
       ? {
-          title: step?.title ?? '',
+          title: step?.title ?? "",
           date: isoToDateInput(step.date),
-          meetingLink: step.event?.meetingLink ?? '',
+          meetingLink: step.event?.meetingLink ?? "",
         }
       : {
-          title: step.title ?? '',
+          title: step.title ?? "",
           date: isoToDateInput(step.date),
-          address: step.event?.address ?? '',
+          address: step.event?.address ?? "",
         },
-  })
+  });
 
   function handleDeleteEvent() {
     startTransition(async () => {
-      await deleteEventAction(step.id)
-      toast.success(`Etapa ${step.title} deletada com sucesso!`)
-      if (typeof window !== 'undefined') window.location.reload()
-    })
+      await deleteEventAction(step.id);
+      toast.success(`Etapa ${step.title} deletada com sucesso!`);
+      if (typeof window !== "undefined") window.location.reload();
+    });
   }
 
   function onSubmit(_values: any) {
@@ -132,14 +134,14 @@ export function EventStepCard({ step }: any) {
           //   address: values.address,
           // })
         }
-        toast.success('Evento atualizado com sucesso!')
-        setOpenEdit(false)
-        if (typeof window !== 'undefined') window.location.reload()
+        toast.success("Evento atualizado com sucesso!");
+        setOpenEdit(false);
+        if (typeof window !== "undefined") window.location.reload();
       } catch (err) {
-        console.error(err)
-        toast.error('Erro ao atualizar o evento.')
+        console.error(err);
+        toast.error("Erro ao atualizar o evento.");
       }
-    })
+    });
   }
 
   return (
@@ -184,7 +186,7 @@ export function EventStepCard({ step }: any) {
                       Deletando etapa...
                     </>
                   ) : (
-                    'Deletar'
+                    "Deletar"
                   )}
                 </Button>
               </DialogFooter>
@@ -204,7 +206,14 @@ export function EventStepCard({ step }: any) {
           <span>Data: {fmtDate(step.date)}</span>
         </div>
 
-        {step.kind === 'event' && (
+        {step?.time && (
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-gray-500" />
+            <span>Horário: {formatTime(step.time)}</span>
+          </div>
+        )}
+
+        {step.kind === "event" && (
           <>
             {step.event?.meetingLink && (
               <div className="flex items-center gap-2">
@@ -250,7 +259,7 @@ export function EventStepCard({ step }: any) {
               <Input
                 id="title"
                 placeholder="Título do evento"
-                {...register('title')}
+                {...register("title")}
               />
               {errors.title && (
                 <p className="text-xs text-red-600">
@@ -261,7 +270,7 @@ export function EventStepCard({ step }: any) {
 
             <div className="grid gap-2">
               <Label htmlFor="date">Data </Label>
-              <Input id="date" type="date" {...register('date')} />
+              <Input id="date" type="date" {...register("date")} />
               {errors.date && (
                 <p className="text-xs text-red-600">
                   {String(errors.date.message)}
@@ -275,7 +284,7 @@ export function EventStepCard({ step }: any) {
                 <Input
                   id="meetingLink"
                   placeholder="https://..."
-                  {...register('meetingLink')}
+                  {...register("meetingLink")}
                 />
                 {/* {errors.meetingLink && <p className="text-xs text-red-600">{String(errors.meetingLink.message)}</p>} */}
               </div>
@@ -285,7 +294,7 @@ export function EventStepCard({ step }: any) {
                 <Input
                   id="address"
                   placeholder="Rua, número - bairro, cidade/UF"
-                  {...register('address')}
+                  {...register("address")}
                 />
                 {/* {errors.address && <p className="text-xs text-red-600">{String(errors.address.message)}</p>} */}
               </div>
@@ -307,12 +316,12 @@ export function EventStepCard({ step }: any) {
                 disabled={isPending}
                 aria-busy={isPending}
               >
-                {isPending ? 'Salvando...' : 'Salvar alterações'}
+                {isPending ? "Salvando..." : "Salvar alterações"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
     </Card>
-  )
+  );
 }

@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ptBR } from 'date-fns/locale'
-import { Calendar as CalIcon, MapPin } from 'lucide-react'
-import { type PropsWithChildren, useTransition } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Button } from '@/presentation/external/components/ui/button'
-import { Calendar as CalendarShad } from '@/presentation/external/components/ui/calendar'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ptBR } from "date-fns/locale";
+import { Calendar as CalIcon, Clock, MapPin } from "lucide-react";
+import { type PropsWithChildren, useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "@/presentation/external/components/ui/button";
+import { Calendar as CalendarShad } from "@/presentation/external/components/ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -18,45 +18,51 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/presentation/external/components/ui/dialog'
-import { Input as ShadInput } from '@/presentation/external/components/ui/input'
+} from "@/presentation/external/components/ui/dialog";
+import {
+  Input,
+  Input as ShadInput,
+} from "@/presentation/external/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/presentation/external/components/ui/popover'
+} from "@/presentation/external/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/presentation/external/components/ui/select'
-import { Textarea } from '@/presentation/external/components/ui/textarea'
-import { cn } from '@/presentation/external/lib/utils'
+} from "@/presentation/external/components/ui/select";
+import { Textarea } from "@/presentation/external/components/ui/textarea";
+import { cn } from "@/presentation/external/lib/utils";
+import { Label } from "@/presentation/shared/components";
 
 const schema = z.object({
-  title: z.string().min(1, 'Informe o título.'),
+  title: z.string().min(1, "Informe o título."),
   date: z.date(),
-  modality: z.literal('Presencial'),
-  address: z.string().min(1, 'Informe o endereço.'),
-  description: z.string().min(1, 'Descreva o evento.'),
-})
+  time: z.string().min(1, "Informe o horário."),
+  modality: z.literal("Presencial"),
+  address: z.string().min(1, "Informe o endereço."),
+  description: z.string().min(1, "Descreva o evento."),
+});
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
 
 interface CreateInPersonEventDialogProps extends PropsWithChildren {
-  edictId: number
+  edictId: number;
   onCreateStepAction: (
     edictId: number,
     input: {
-      title: string
-      date: Date
-      modality: 'Presencial'
-      address: string
-      description: string
-    },
-  ) => Promise<void>
+      title: string;
+      date: Date;
+      modality: "Presencial";
+      address: string;
+      description: string;
+      time: string
+    }
+  ) => Promise<void>;
 }
 
 export function CreateInPersonEventDialog({
@@ -73,31 +79,32 @@ export function CreateInPersonEventDialog({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: '',
+      title: "",
       date: undefined,
-      modality: 'Presencial',
-      address: '',
-      description: '',
+      modality: "Presencial",
+      address: "",
+      description: "",
+      time: "",
     },
-  })
+  });
 
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
 
   async function onSubmit(data: FormData) {
     startTransition(async () => {
       await onCreateStepAction(edictId, {
         ...data,
         date: new Date(data.date),
-      })
-      toast.success(`Etapa ${data.title} criada com sucesso!`)
-      reset()
-    })
+      });
+      toast.success(`Etapa ${data.title} criada com sucesso!`);
+      reset();
+    });
   }
 
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) reset()
+        if (!open) reset();
       }}
     >
       <DialogContent className="sm:max-w-[560px]">
@@ -113,7 +120,8 @@ export function CreateInPersonEventDialog({
             <span className="text-sm font-medium">Título *</span>
             <ShadInput
               placeholder="Ex: Workshop de Pitch"
-              {...register('title')}
+              id="title"
+              {...register("title")}
             />
             {errors.title && (
               <span className="text-xs text-red-500">
@@ -135,14 +143,14 @@ export function CreateInPersonEventDialog({
                         type="button"
                         variant="outline"
                         className={cn(
-                          'w-full justify-start',
-                          !field.value && 'text-muted-foreground',
+                          "w-full justify-start",
+                          !field.value && "text-muted-foreground"
                         )}
                       >
                         <CalIcon className="mr-2 h-4 w-4" />
                         {field.value
-                          ? field.value.toLocaleDateString('pt-BR')
-                          : 'Selecionar'}
+                          ? field.value.toLocaleDateString("pt-BR")
+                          : "Selecionar"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="p-0">
@@ -194,7 +202,8 @@ export function CreateInPersonEventDialog({
               <MapPin className="h-4 w-4 text-gray-400" />
               <ShadInput
                 placeholder="Rua, número, bairro, cidade"
-                {...register('address')}
+                id="address"
+                {...register("address")}
               />
             </div>
             {errors.address && (
@@ -204,12 +213,32 @@ export function CreateInPersonEventDialog({
             )}
           </label>
 
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="time-picker">Horário do Evento *</Label>
+
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-gray-400" />
+              <Input
+                type="time"
+                id="time-picker"
+                {...register("time")}
+                defaultValue="10:30"
+                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+              />
+            </div>
+            {errors.time && (
+              <span className="text-xs text-red-500">
+                {errors.time.message}
+              </span>
+            )}
+          </div>
+
           <label className="grid gap-1" htmlFor="description">
             <span className="text-sm font-medium">Descrição *</span>
             <Textarea
               rows={4}
               placeholder="Detalhes do evento"
-              {...register('description')}
+              {...register("description")}
             />
             {errors.description && (
               <span className="text-xs text-red-500">
@@ -224,7 +253,7 @@ export function CreateInPersonEventDialog({
               type="submit"
               disabled={isSubmitting}
             >
-              {isPending ? 'Adicionando...' : 'Adicionar Evento'}
+              {isPending ? "Adicionando..." : "Adicionar Evento"}
             </Button>
             <DialogClose asChild>
               <Button variant="ghost" type="button">
@@ -237,5 +266,5 @@ export function CreateInPersonEventDialog({
 
       <DialogTrigger asChild>{children}</DialogTrigger>
     </Dialog>
-  )
+  );
 }

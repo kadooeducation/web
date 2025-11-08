@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ptBR } from 'date-fns/locale'
-import { Calendar as CalIcon, Link2 } from 'lucide-react'
+import { Calendar as CalIcon, Clock, Link2 } from 'lucide-react'
 import { type PropsWithChildren, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/presentation/external/components/ui/dialog'
-import { Input as ShadInput } from '@/presentation/external/components/ui/input'
+import { Input, Input as ShadInput } from '@/presentation/external/components/ui/input'
 import {
   Popover,
   PopoverContent,
@@ -35,10 +35,12 @@ import {
 } from '@/presentation/external/components/ui/select'
 import { Textarea } from '@/presentation/external/components/ui/textarea'
 import { cn } from '@/presentation/external/lib/utils'
+import { Label } from '@/presentation/shared/components'
 
 const schema = z.object({
   title: z.string().min(1, 'Informe o título.'),
   date: z.date(),
+  time: z.string().min(1, "Informe o horário."),
   modality: z.literal('Online'),
   meetingLink: z.url('Informe um link válido.'),
   description: z.string().min(1, 'Descreva o evento.'),
@@ -68,6 +70,7 @@ export function CreateOnlineEventDialog({
       modality: 'Online',
       meetingLink: '',
       description: '',
+      time: ""
     },
   })
 
@@ -177,6 +180,25 @@ export function CreateOnlineEventDialog({
                 </span>
               )}
             </label>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="time-picker">Horário do Evento *</Label>
+
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-gray-400" />
+              <Input
+                type="time"
+                id="time-picker"
+                defaultValue="10:30"
+                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+              />
+            </div>
+            {errors.time && (
+              <span className="text-xs text-red-500">
+                {errors.time.message}
+              </span>
+            )}
           </div>
 
           <label className="grid gap-1" htmlFor="meetingLink">
