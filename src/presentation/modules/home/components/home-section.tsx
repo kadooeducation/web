@@ -1,10 +1,14 @@
 import { Suspense } from "react";
+import { kyClient } from "@/infra/external/http/ky-client/api";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
-import { EnrollmentOverview } from "./enrollment-overview";
+import { EdictsList } from "./edicts-list";
 import { WelcomeBanner } from "./welcome-banner";
+import type { Edict } from "@/business/domain/edict";
 
 export async function HomeSection() {
+  const edicts = await kyClient.get<Edict[]>("user-edicts");
+
   return (
     <div className="min-h-screen">
       <section className="p-6 space-y-8 min-h-screen">
@@ -13,9 +17,9 @@ export async function HomeSection() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-3xl font-bold text-gray-900">Editais</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Seus Editais</h2>
               <p className="text-gray-600">
-                Editais em que você está inscrito.
+                Acompanhe os programas em que você está participando.
               </p>
             </div>
             <Button
@@ -23,11 +27,11 @@ export async function HomeSection() {
               size="lg"
               className="border-2 border-[#5127FF] text-[#5127FF] hover:bg-[#5127FF] hover:text-white transition-all duration-300 font-semibold px-6"
             >
-              Ver Todos
+              Ver todos
             </Button>
           </div>
-          <Suspense fallback={<Skeleton.EnrollmentOverviewSkeleton />}>
-            <EnrollmentOverview />
+          <Suspense fallback={<Skeleton.EdictsList />}>
+            <EdictsList edicts={edicts} />
           </Suspense>
         </div>
       </section>

@@ -1,21 +1,21 @@
 "use client";
+
 import { Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/presentation/external/components/ui/button";
+import type { Edict } from "@/business/domain/edict";
 import { Card, CardContent } from "@/presentation/external/components/ui/card";
 import { formatDate } from "@/shared/functions/format-date";
+import { StatusEdictBadge } from "../../../shared/layout/components/status-edict-badge";
 
 interface EdictItemsProps {
-  edict: {
-    id: number;
-    status: string;
-    categories: string[];
-    title: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-  };
+  edict: Edict;
 }
+
+const configDate: Intl.DateTimeFormatOptions = {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+};
 
 export function EdictItems({ edict }: EdictItemsProps) {
   const { push } = useRouter();
@@ -23,64 +23,46 @@ export function EdictItems({ edict }: EdictItemsProps) {
   return (
     <Card
       key={edict.id}
-      className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white hover:cursor-pointer"
+      className="group hover:cursor-pointer relative border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:-translate-y-1 bg-white"
       onClick={() => push(`/edital/${edict.id}`)}
     >
-      <CardContent className="px-6 pt-6 relative z-10">
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#5127FF] transition-colors duration-300">
+      <CardContent className="p-6 space-y-5 relative z-10">
+        <div className="flex flex-col gap-1">
+          <div className="inline-flex justify-between mb-3">
+            <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#5127FF] transition-colors duration-300">
               {edict.title}
             </h3>
-            <p
-              className="text-gray-600 text-sm leading-relaxed truncate max-w-[60ch]"
-              title={edict.description}
+            <StatusEdictBadge status={edict.status} />
+          </div>
+
+          <p
+            className="text-gray-600 text-sm leading-relaxed line-clamp-2"
+            title={edict.description}
+          >
+            {edict.description}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {edict.categories?.map((category) => (
+            <span
+              key={category}
+              className="bg-[#F4F0FF] text-[#5127FF] text-xs font-medium px-3 py-1 rounded-full"
             >
-              {edict.description}
-            </p>
+              {category}
+            </span>
+          ))}
+        </div>
 
-            <div className="flex flex-row mt-3 gap-3">
-              {edict?.categories?.map((category) => (
-                <div
-                  key={category}
-                  className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full"
-                >
-                  {category}
-                </div>
-              ))}
-            </div>
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100 group-hover:bg-gray-100 transition-colors duration-300">
+          <div className="flex items-center gap-2 text-sm">
+            <Calendar className="w-4 h-4 text-[#5127FF]" />
+            <span>{formatDate(edict.startDate, configDate)}</span>
           </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl group-hover:bg-white group-hover:shadow-sm transition-all duration-300 mb-5">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="w-4 h-4 text-[#5127FF]" />
-              <span className="font-medium">
-                {formatDate(edict.startDate, {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  timeZone: "America/Fortaleza",
-                })}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-gray-500">até</span>
-              <span className="font-medium">
-                {formatDate(edict.endDate, {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  timeZone: "America/Fortaleza",
-                })}
-              </span>
-            </div>
+          <span className="text-gray-500 text-sm">até</span>
+          <div className="flex items-center gap-2 text-sm">
+            <span>{formatDate(edict.endDate, configDate)}</span>
           </div>
-
-          {edict.status === "Ativo" ? (
-            <Button className="w-full bg-gradient-to-r from-[#5127FF] to-[#5127FF]/90 hover:from-[#5127FF]/90 hover:to-[#5127FF] text-white font-semibold py-3 rounded-xl transition-all duration-300 transform group-hover:scale-105 shadow-md hover:shadow-lg mt-auto">
-              Saiba mais
-            </Button>
-          ) : null}
         </div>
       </CardContent>
     </Card>

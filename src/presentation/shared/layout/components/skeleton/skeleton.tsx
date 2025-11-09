@@ -13,7 +13,7 @@ function Root({ className, ...props }: ComponentProps<'div'>) {
   )
 }
 
-function EnrollmentOverviewSkeleton() {
+function EdictsList() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <Root className="h-[278px]" />
@@ -41,6 +41,6 @@ function HighlightMentorsSkeleton() {
 
 export const Skeleton = {
   Root,
-  EnrollmentOverviewSkeleton,
+  EdictsList,
   HighlightMentorsSkeleton,
 }
