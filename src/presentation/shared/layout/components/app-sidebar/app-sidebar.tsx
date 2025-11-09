@@ -1,7 +1,7 @@
 import { Calendar, Home, Inbox, Projector, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProfileEnum } from "@/business/domain/enum/enum-profile";
+import { ProfileEnum } from "@/business/domain/enum/profile-enum";
 import { kyClient } from "@/infra/external/http/ky-client/api";
 import {
   Sidebar,

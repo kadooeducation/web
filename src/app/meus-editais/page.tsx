@@ -1,85 +1,85 @@
-'use client'
+"use client";
 
-import { Calendar } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-import { userGatewayHttp } from '@/infra/modules/user/user-gateway-http'
-import { Card, CardContent } from '@/presentation/external/components/ui/card'
+import { Calendar } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import type { ProfileEnum } from "@/business/domain/enum/profile-enum";
+import { userGatewayHttp } from "@/infra/modules/user/user-gateway-http";
+import { Card, CardContent } from "@/presentation/external/components/ui/card";
 import {
   SidebarInset,
   SidebarProvider,
-} from '@/presentation/external/components/ui/sidebar'
-import type { ProfileEnum } from '@/business/domain/enum/enum-profile'
+} from "@/presentation/external/components/ui/sidebar";
 
-export type EditalStatus = 'inscrito' | 'em_analise' | 'aprovado' | 'reprovado'
+export type EditalStatus = "inscrito" | "em_analise" | "aprovado" | "reprovado";
 
 export interface EditalItem {
-  id: number
-  titulo: string
-  descricao: string
-  categoria: string
-  inicio: string
-  termino: string
-  status: EditalStatus
-  inscrito?: boolean
+  id: number;
+  titulo: string;
+  descricao: string;
+  categoria: string;
+  inicio: string;
+  termino: string;
+  status: EditalStatus;
+  inscrito?: boolean;
 }
 
 const editcs = [
   {
     id: 1,
-    title: 'Programa de Aceleração Tech 2024',
+    title: "Programa de Aceleração Tech 2024",
     shortDescription:
-      'Venha participar desse programa para startups de tecnologia',
-    startDate: '17/07/2025',
-    endDate: '17/07/2025',
-    category: 'Tecnologia',
+      "Venha participar desse programa para startups de tecnologia",
+    startDate: "17/07/2025",
+    endDate: "17/07/2025",
+    category: "Tecnologia",
   },
   {
     id: 2,
-    title: 'Programa de Aceleração Tech 2024',
+    title: "Programa de Aceleração Tech 2024",
     shortDescription:
-      'Venha participar desse programa para startups de tecnologia',
-    startDate: '17/07/2025',
-    endDate: '17/07/2025',
-    category: 'Tecnologia',
+      "Venha participar desse programa para startups de tecnologia",
+    startDate: "17/07/2025",
+    endDate: "17/07/2025",
+    category: "Tecnologia",
   },
   {
     id: 3,
-    title: 'Programa de Aceleração Tech 2024',
+    title: "Programa de Aceleração Tech 2024",
     shortDescription:
-      'Venha participar desse programa para startups de tecnologia',
-    startDate: '17/07/2025',
-    endDate: '17/07/2025',
-    category: 'Tecnologia',
+      "Venha participar desse programa para startups de tecnologia",
+    startDate: "17/07/2025",
+    endDate: "17/07/2025",
+    category: "Tecnologia",
   },
   {
     id: 4,
-    title: 'Programa de Aceleração Tech 2024',
+    title: "Programa de Aceleração Tech 2024",
     shortDescription:
-      'Venha participar desse programa para startups de tecnologia',
-    startDate: '17/07/2025',
-    endDate: '17/07/2025',
-    category: 'Tecnologia',
+      "Venha participar desse programa para startups de tecnologia",
+    startDate: "17/07/2025",
+    endDate: "17/07/2025",
+    category: "Tecnologia",
   },
-]
+];
 
 export default function MeusEditaisPage() {
   const [user, setUser] = useState<{ name: string; role: ProfileEnum } | null>(
-    null,
-  )
-  const { push } = useRouter()
+    null
+  );
+  const { push } = useRouter();
 
   const getUser = useCallback(async () => {
-    await userGatewayHttp.get().then(setUser)
-  }, [])
+    await userGatewayHttp.get().then(setUser);
+  }, []);
 
   useEffect(() => {
-    getUser()
-  }, [getUser])
+    getUser();
+  }, [getUser]);
 
   // if (!user) return <Loading />
 
-  const _role = user?.role
+  const _role = user?.role;
 
   return (
     <SidebarProvider>
@@ -173,5 +173,5 @@ export default function MeusEditaisPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

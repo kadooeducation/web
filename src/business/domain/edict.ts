@@ -1,3 +1,5 @@
+import type { EdictStatusEnum } from "./enum/edict-status-enum"
+
 export interface Edict {
   id: number
   title: string
@@ -7,6 +9,7 @@ export interface Edict {
   location: string
   startDate: Date
   endDate: Date
+  status: EdictStatusEnum
   file: string
   categories: string[]
 }

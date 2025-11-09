@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { ProfileEnum } from "@/business/domain/enum/enum-profile";
+import type { ProfileEnum } from "@/business/domain/enum/profile-enum";
 import { loginGatewayHttp } from "@/infra/modules/login/login-gateway-http";
 import {
   Sidebar,

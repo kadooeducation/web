@@ -1,4 +1,4 @@
-import type { ProfileEnum } from "@/business/domain/enum/enum-profile";
+import type { ProfileEnum } from "@/business/domain/enum/profile-enum";
 import type { GetUserDTO } from "./dto/get-user-dto";
 
 export interface CreateUser {

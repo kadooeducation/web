@@ -21,6 +21,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { deleteEdictAction } from "@/app/adm/editais/actions";
+import {
+  EDICT_STATUS_LABELS,
+  EdictStatusEnum,
+} from "@/business/domain/enum/edict-status-enum";
 import { Button } from "@/presentation/external/components/ui/button";
 import { Checkbox } from "@/presentation/external/components/ui/checkbox";
 import {
@@ -61,7 +65,6 @@ type Edict = {
 const fmtBR = (d: string) =>
   format(parse(d, "yyyy-MM-dd", new Date()), "dd/MM/yyyy");
 
-// --- Filtro multi-coluna igual ao da Tabela 1 ---
 const multiColumnFilterFn: FilterFn<Edict> = (row, _columnId, filterValue) => {
   const e = row.original;
   const searchable = [
@@ -146,29 +149,32 @@ const columns: ColumnDef<Edict>[] = [
     enableSorting: false,
   },
   {
-    id: "status",
-    header: "Status",
-    accessorFn: (e) => e.status,
-    cell: ({ row }) => {
-      const status = String(row.getValue("status") ?? "").toUpperCase();
-      const color =
-        status === "ABERTO"
-          ? "bg-green-100 text-green-700"
-          : status === "ENCERRADO"
-          ? "bg-red-100 text-red-700"
-          : "bg-yellow-100 text-yellow-700";
-      const label = status.charAt(0) + status.slice(1).toLowerCase();
-      return (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${color}`}
-        >
-          {label}
-        </span>
-      );
-    },
-    size: 140,
-    enableSorting: false,
+  id: "status",
+  header: "Status",
+  accessorFn: (e) => e.status,
+  cell: ({ row }) => {
+    const status = row.getValue("status") as EdictStatusEnum;
+
+    const label = EDICT_STATUS_LABELS[status];
+
+    const color =
+      status === EdictStatusEnum.ABERTO
+        ? "bg-green-100 text-green-700"
+        : status === EdictStatusEnum.ENCERRADO
+        ? "bg-red-100 text-red-700"
+        : "bg-yellow-100 text-yellow-700";
+
+    return (
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-semibold ${color}`}
+      >
+        {label}
+      </span>
+    );
   },
+  size: 140,
+  enableSorting: false,
+},
   {
     id: "actions",
     header: () => <span className="sr-only">Ações</span>,

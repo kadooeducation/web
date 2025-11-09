@@ -92,8 +92,6 @@ export function StepsSection({ steps }: StepsSectionProps) {
     [steps]
   );
 
-  console.log(steps)
-
   return (
     <div className="relative">
       <div className="mb-4 flex items-end justify-between gap-4">
