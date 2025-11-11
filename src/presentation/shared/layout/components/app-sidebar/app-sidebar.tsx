@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/presentation/external/components/ui/sidebar";
+import { auth } from "@/infra/external/http/auth";
 
 const items = [
   {
@@ -42,9 +43,7 @@ const roles = {
 } as const;
 
 export async function AppSidebar() {
-  const user = await kyClient.get<{ name: string; role: keyof typeof roles }>(
-    "me"
-  );
+  const { user } = await auth()
 
   return (
     <Sidebar collapsible="icon">
