@@ -1,10 +1,10 @@
 import { Suspense } from "react";
+import type { Edict } from "@/business/domain/edict";
 import { kyClient } from "@/infra/external/http/ky-client/api";
 import { Button } from "@/presentation/external/components/ui/button";
-import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
+import { Skeleton } from "@/presentation/shared/components/layout/components/skeleton/skeleton";
 import { EdictsList } from "./edicts-list";
 import { WelcomeBanner } from "./welcome-banner";
-import type { Edict } from "@/business/domain/edict";
 
 export async function HomeSection() {
   const edicts = await kyClient.get<Edict[]>("user-edicts");

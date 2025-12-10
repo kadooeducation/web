@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 import { SidebarProvider } from "@/presentation/external/components/ui/sidebar";
-import { AppSidebar } from "@/presentation/shared/layout/components/app-sidebar/app-sidebar";
-import { Navbar } from "@/presentation/shared/layout/components/navbar/navbar";
+import { AppSidebar } from "@/presentation/shared/components/layout/components/app-sidebar/app-sidebar";
+import { Navbar } from "@/presentation/shared/components/layout/components/navbar/navbar";
 
 export const metadata: Metadata = {
   title: "Início",

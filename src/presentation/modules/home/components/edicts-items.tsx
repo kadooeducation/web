@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Edict } from "@/business/domain/edict";
 import { Card, CardContent } from "@/presentation/external/components/ui/card";
 import { formatDate } from "@/shared/functions/format-date";
-import { StatusEdictBadge } from "../../../shared/layout/components/status-edict-badge";
+import { StatusEdictBadge } from "../../../shared/components/layout/components/status-edict-badge";
 
 interface EdictItemsProps {
   edict: Edict;

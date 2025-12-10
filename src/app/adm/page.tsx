@@ -11,7 +11,7 @@ import {
 import { ApplicantsBarChart } from "@/presentation/modules/home/components/applicants-bar-chart";
 import { EdictsList } from "@/presentation/modules/home/components/edicts-list";
 import { MentorAreasPieChart } from "@/presentation/modules/home/components/mentors-areas-pie-chart";
-import { Skeleton } from "@/presentation/shared/layout/components/skeleton/skeleton";
+import { Skeleton } from "@/presentation/shared/components/layout/components/skeleton/skeleton";
 
 export const dynamic = "force-dynamic";
 

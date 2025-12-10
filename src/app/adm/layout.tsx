@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { kyClient } from "@/infra/external/http/ky-client/api";
 import { SidebarProvider } from "@/presentation/external/components/ui/sidebar";
-import { AdminSidebar } from "@/presentation/shared/layout/components/admin-sidebar/admin-sidebar";
-import { Navbar } from "@/presentation/shared/layout/components/navbar/navbar";
+import { AdminSidebar } from "@/presentation/shared/components/layout/components/admin-sidebar/admin-sidebar";
+import { Navbar } from "@/presentation/shared/components/layout/components/navbar/navbar";
 
 export default async function AdminLayout({
   children,

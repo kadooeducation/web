@@ -3,7 +3,6 @@ import {
   type NextRequest,
   NextResponse,
 } from 'next/server'
-import { decrypt } from './infra/shared/security/decrypt'
 import { APP_ROUTES } from './shared/constants/routes'
 
 const publicRoutes = [
@@ -49,21 +48,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  if (authToken && !publicRoute) {
-    const _token = await decrypt(authToken.value)
+  // if (authToken && !publicRoute) {
+  //   const _token = await decrypt(authToken.value)
 
-    // if (!token || token === 'invalid') {
-    //   const redirect = request.nextUrl.clone()
+  //   // if (!token || token === 'invalid') {
+  //   //   const redirect = request.nextUrl.clone()
 
-    //   redirect.pathname = APP_ROUTES.login
+  //   //   redirect.pathname = APP_ROUTES.login
 
-    //   const response = NextResponse.redirect(redirect)
+  //   //   const response = NextResponse.redirect(redirect)
 
-    //   response.cookies.delete(process.env.NEXT_PUBLIC_TOKEN_NAME)
+  //   //   response.cookies.delete(process.env.NEXT_PUBLIC_TOKEN_NAME)
 
-    //   return response
-    // }
-  }
+  //   //   return response
+  //   // }
+  // }
 
   return NextResponse.next()
 }
